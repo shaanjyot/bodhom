@@ -29,63 +29,66 @@ export default function ContactPage() {
   }
 
   return (
-    <div className="min-h-screen bg-cream-DEFAULT">
+    <div className="min-h-screen">
       {/* Hero Section */}
       <section className="relative bg-charcoal text-white pt-32 pb-16 overflow-hidden">
         <div className="absolute inset-0 bg-[url('/slide3.webp')] bg-cover bg-center opacity-30"></div>
         <div className="absolute inset-0 bg-gradient-to-b from-charcoal/80 via-charcoal/70 to-charcoal"></div>
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <p className="text-brass-gold font-medium tracking-widest uppercase mb-4 animate-fade-in">We're Here to Help</p>
-          <h1 className="text-5xl md:text-6xl font-serif font-bold mb-4 animate-fade-in-up">
-            Get in Touch
-          </h1>
-          <p className="text-xl text-cream-300 animate-fade-in-up stagger-2">
+          <div className="ethnic-title-wrapper">
+            <h1 className="text-5xl md:text-6xl font-serif font-bold title-decorated animate-fade-in-up">
+              Get in Touch
+            </h1>
+          </div>
+          <p className="text-xl text-cream-300 animate-fade-in-up stagger-2 mt-6">
             We'd love to hear from you. Send us a message and we'll respond as soon as possible.
           </p>
         </div>
       </section>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div className="section-cream">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Contact Info */}
           <div className="lg:col-span-1 space-y-6">
-            <div className="bg-white rounded-2xl shadow-soft p-6">
+            <div className="bg-white rounded-2xl shadow-soft p-6 card-glow">
               <div className="flex items-start gap-4">
-                <div className="w-12 h-12 bg-brass-gold rounded-lg flex items-center justify-center flex-shrink-0">
+                <div className="w-12 h-12 bg-brass-gold rounded-xl flex items-center justify-center flex-shrink-0">
                   <Mail className="w-6 h-6 text-white" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-gray-900 mb-1">Email</h3>
-                  <a href="mailto:info@bodhom.in" className="text-gray-600 hover:text-brass-gold">
+                  <h3 className="font-serif font-semibold text-charcoal mb-1">Email</h3>
+                  <a href="mailto:info@bodhom.in" className="text-charcoal-400 hover:text-brass-gold">
                     info@bodhom.in
                   </a>
                 </div>
               </div>
             </div>
 
-            <div className="bg-white rounded-2xl shadow-soft p-6">
+            <div className="bg-white rounded-2xl shadow-soft p-6 card-glow">
               <div className="flex items-start gap-4">
-                <div className="w-12 h-12 bg-brass-gold rounded-lg flex items-center justify-center flex-shrink-0">
+                <div className="w-12 h-12 bg-brass-gold rounded-xl flex items-center justify-center flex-shrink-0">
                   <Phone className="w-6 h-6 text-white" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-gray-900 mb-1">Phone</h3>
-                  <a href="tel:+919876543210" className="text-gray-600 hover:text-brass-gold">
+                  <h3 className="font-serif font-semibold text-charcoal mb-1">Phone</h3>
+                  <a href="tel:+919876543210" className="text-charcoal-400 hover:text-brass-gold">
                     +91 98765 43210
                   </a>
                 </div>
               </div>
             </div>
 
-            <div className="bg-white rounded-2xl shadow-soft p-6">
+            <div className="bg-white rounded-2xl shadow-soft p-6 card-glow">
               <div className="flex items-start gap-4">
-                <div className="w-12 h-12 bg-brass-gold rounded-lg flex items-center justify-center flex-shrink-0">
+                <div className="w-12 h-12 bg-brass-gold rounded-xl flex items-center justify-center flex-shrink-0">
                   <MapPin className="w-6 h-6 text-white" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-gray-900 mb-1">Address</h3>
-                  <p className="text-gray-600">
+                  <h3 className="font-serif font-semibold text-charcoal mb-1">Address</h3>
+                  <p className="text-charcoal-400">
                     Odisha, India<br />
                     Mon - Sat: 9:00 AM - 7:00 PM
                   </p>
@@ -214,6 +217,7 @@ export default function ContactPage() {
               </form>
             </div>
           </div>
+        </div>
         </div>
       </div>
     </div>
