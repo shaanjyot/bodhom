@@ -64,9 +64,9 @@ export default function OAuthPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-sandstone-beige via-white to-sandstone-beige flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gradient-to-br from-cream-DEFAULT via-cream-100 to-cream-DEFAULT flex items-center justify-center pt-28 pb-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full">
-        <div className="bg-white rounded-2xl shadow-elegant-lg p-8 text-center">
+        <div className="bg-white rounded-2xl shadow-soft-lg p-8 text-center">
           {/* Logo */}
           <Link href="/" className="inline-flex items-center space-x-3 mb-6">
             <div className="bg-gradient-to-br from-brass-gold to-primary-dark p-3 rounded-lg">

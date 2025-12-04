@@ -56,21 +56,28 @@ export default function ProductDetailPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Breadcrumb */}
-        <nav className="mb-8 text-sm">
-          <Link href="/" className="text-gray-500 hover:text-brass-gold">Home</Link>
-          <span className="mx-2 text-gray-400">/</span>
-          <Link href="/products" className="text-gray-500 hover:text-brass-gold">Products</Link>
-          <span className="mx-2 text-gray-400">/</span>
-          <span className="text-gray-900">{product.name}</span>
-        </nav>
+    <div className="min-h-screen bg-cream-DEFAULT">
+      {/* Hero Section */}
+      <section className="relative bg-charcoal text-white pt-32 pb-8 overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-b from-charcoal/90 to-charcoal"></div>
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Breadcrumb */}
+          <nav className="text-sm">
+            <Link href="/" className="text-cream-300 hover:text-brass-gold transition-colors">Home</Link>
+            <span className="mx-2 text-cream-400">/</span>
+            <Link href="/products" className="text-cream-300 hover:text-brass-gold transition-colors">Products</Link>
+            <span className="mx-2 text-cream-400">/</span>
+            <span className="text-white">{product.name}</span>
+          </nav>
+        </div>
+      </section>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
           {/* Image Gallery */}
           <div>
-            <div className="aspect-square bg-gradient-to-br from-sandstone-beige to-white rounded-xl overflow-hidden mb-4 shadow-elegant">
+            <div className="aspect-square bg-gradient-to-br from-cream-200 to-cream-100 rounded-2xl overflow-hidden mb-4 shadow-soft">
               <div className="w-full h-full flex items-center justify-center">
                 <span className="text-9xl">🏺</span>
               </div>
@@ -80,11 +87,11 @@ export default function ProductDetailPage() {
                 <button
                   key={index}
                   onClick={() => setSelectedImage(index)}
-                  className={`aspect-square rounded-lg overflow-hidden border-2 ${
-                    selectedImage === index ? 'border-brass-gold' : 'border-gray-200'
+                  className={`aspect-square rounded-xl overflow-hidden border-2 transition-colors ${
+                    selectedImage === index ? 'border-brass-gold' : 'border-cream-300'
                   }`}
                 >
-                  <div className="w-full h-full bg-gradient-to-br from-sandstone-beige to-white flex items-center justify-center">
+                  <div className="w-full h-full bg-gradient-to-br from-cream-200 to-cream-100 flex items-center justify-center">
                     <span className="text-3xl">🏺</span>
                   </div>
                 </button>
@@ -102,7 +109,7 @@ export default function ProductDetailPage() {
               )}
             </div>
 
-            <h1 className="text-4xl font-serif font-bold text-deep-maroon mb-4">
+            <h1 className="text-4xl font-serif font-bold text-charcoal mb-4">
               {product.name}
             </h1>
 
@@ -114,13 +121,13 @@ export default function ProductDetailPage() {
                     key={i}
                     className={`w-5 h-5 ${
                       i < Math.floor(product.rating)
-                        ? 'fill-sacred-saffron text-sacred-saffron'
-                        : 'text-gray-300'
+                        ? 'fill-brass-gold text-brass-gold'
+                        : 'text-cream-400'
                     }`}
                   />
                 ))}
               </div>
-              <span className="text-gray-600">
+              <span className="text-charcoal-400">
                 {product.rating} ({product.reviews} reviews)
               </span>
             </div>
@@ -128,11 +135,11 @@ export default function ProductDetailPage() {
             {/* Price */}
             <div className="mb-6">
               <div className="flex items-baseline gap-3 mb-2">
-                <span className="text-4xl font-bold text-deep-maroon">
+                <span className="text-4xl font-bold text-charcoal">
                   ₹{product.price.toLocaleString()}
                 </span>
                 {product.originalPrice && (
-                  <span className="text-xl text-gray-500 line-through">
+                  <span className="text-xl text-charcoal-400 line-through">
                     ₹{product.originalPrice.toLocaleString()}
                   </span>
                 )}
@@ -145,18 +152,18 @@ export default function ProductDetailPage() {
             </div>
 
             {/* Description */}
-            <p className="text-gray-700 mb-6 leading-relaxed">
+            <p className="text-charcoal-500 mb-6 leading-relaxed">
               {product.description}
             </p>
 
             {/* Features */}
             <div className="mb-6">
-              <h3 className="font-semibold text-gray-900 mb-3">Key Features:</h3>
+              <h3 className="font-semibold text-charcoal mb-3">Key Features:</h3>
               <ul className="space-y-2">
                 {product.features.map((feature, index) => (
                   <li key={index} className="flex items-start">
                     <span className="text-brass-gold mr-2">✓</span>
-                    <span className="text-gray-700">{feature}</span>
+                    <span className="text-charcoal-500">{feature}</span>
                   </li>
                 ))}
               </ul>
@@ -164,30 +171,30 @@ export default function ProductDetailPage() {
 
             {/* Quantity Selector */}
             <div className="mb-6">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-charcoal mb-2">
                 Quantity
               </label>
               <div className="flex items-center gap-4">
-                <div className="flex items-center border-2 border-gray-300 rounded-lg">
+                <div className="flex items-center border-2 border-cream-300 rounded-xl">
                   <button
                     onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                    className="p-3 hover:bg-gray-100 transition-colors"
+                    className="p-3 hover:bg-cream-100 transition-colors rounded-l-lg"
                   >
                     <Minus className="w-4 h-4" />
                   </button>
                   <span className="px-6 py-3 font-semibold text-lg">{quantity}</span>
                   <button
                     onClick={() => setQuantity(quantity + 1)}
-                    className="p-3 hover:bg-gray-100 transition-colors"
+                    className="p-3 hover:bg-cream-100 transition-colors rounded-r-lg"
                   >
                     <Plus className="w-4 h-4" />
                   </button>
                 </div>
                 <button
                   onClick={() => setIsWishlisted(!isWishlisted)}
-                  className="p-3 border-2 border-gray-300 rounded-lg hover:border-brass-gold transition-colors"
+                  className="p-3 border-2 border-cream-300 rounded-xl hover:border-brass-gold transition-colors"
                 >
-                  <Heart className={`w-6 h-6 ${isWishlisted ? 'fill-red-500 text-red-500' : 'text-gray-600'}`} />
+                  <Heart className={`w-6 h-6 ${isWishlisted ? 'fill-red-500 text-red-500' : 'text-charcoal-400'}`} />
                 </button>
               </div>
             </div>
@@ -195,43 +202,43 @@ export default function ProductDetailPage() {
             {/* Add to Cart Button */}
             <button
               onClick={handleAddToCart}
-              className="w-full bg-gradient-to-r from-brass-gold to-primary-dark text-white py-4 px-6 rounded-lg font-semibold hover:from-primary-dark hover:to-brass-gold transition-all duration-300 flex items-center justify-center gap-2 mb-4 shadow-lg hover:shadow-xl"
+              className="w-full btn-gold text-white py-4 px-6 rounded-xl font-semibold flex items-center justify-center gap-2 mb-4"
             >
               <ShoppingCart className="w-5 h-5" />
               Add to Cart - ₹{(product.price * quantity).toLocaleString()}
             </button>
 
             {/* Trust Badges */}
-            <div className="grid grid-cols-3 gap-4 pt-6 border-t border-gray-200">
+            <div className="grid grid-cols-3 gap-4 pt-6 border-t border-cream-300">
               <div className="text-center">
                 <Truck className="w-8 h-8 text-brass-gold mx-auto mb-2" />
-                <p className="text-sm font-medium text-gray-700">Free Shipping</p>
-                <p className="text-xs text-gray-500">Above ₹999</p>
+                <p className="text-sm font-medium text-charcoal">Free Shipping</p>
+                <p className="text-xs text-charcoal-400">Above ₹999</p>
               </div>
               <div className="text-center">
                 <Shield className="w-8 h-8 text-brass-gold mx-auto mb-2" />
-                <p className="text-sm font-medium text-gray-700">Secure Payment</p>
-                <p className="text-xs text-gray-500">100% Safe</p>
+                <p className="text-sm font-medium text-charcoal">Secure Payment</p>
+                <p className="text-xs text-charcoal-400">100% Safe</p>
               </div>
               <div className="text-center">
                 <RotateCcw className="w-8 h-8 text-brass-gold mx-auto mb-2" />
-                <p className="text-sm font-medium text-gray-700">Easy Returns</p>
-                <p className="text-xs text-gray-500">7 Days</p>
+                <p className="text-sm font-medium text-charcoal">Easy Returns</p>
+                <p className="text-xs text-charcoal-400">7 Days</p>
               </div>
             </div>
           </div>
         </div>
 
         {/* Specifications */}
-        <div className="mt-16 bg-white rounded-xl shadow-elegant p-8">
-          <h2 className="text-2xl font-serif font-bold text-deep-maroon mb-6">
+        <div className="mt-16 bg-white rounded-2xl shadow-soft p-8">
+          <h2 className="text-2xl font-serif font-bold text-charcoal mb-6">
             Specifications
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {Object.entries(product.specifications).map(([key, value]) => (
               <div key={key} className="flex">
-                <span className="font-semibold text-gray-700 w-40">{key}:</span>
-                <span className="text-gray-600">{value}</span>
+                <span className="font-semibold text-charcoal w-40">{key}:</span>
+                <span className="text-charcoal-400">{value}</span>
               </div>
             ))}
           </div>

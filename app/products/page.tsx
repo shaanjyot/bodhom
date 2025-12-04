@@ -87,17 +87,23 @@ const allProducts = [
 
 export default function ProductsPage() {
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-4xl font-serif font-bold text-deep-maroon mb-2">
+    <div className="min-h-screen bg-cream-DEFAULT">
+      {/* Hero Section */}
+      <section className="relative bg-charcoal text-white pt-32 pb-16 overflow-hidden">
+        <div className="absolute inset-0 bg-[url('/slide1.webp')] bg-cover bg-center opacity-30"></div>
+        <div className="absolute inset-0 bg-gradient-to-b from-charcoal/80 via-charcoal/70 to-charcoal"></div>
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <p className="text-brass-gold font-medium tracking-widest uppercase mb-4 animate-fade-in">Our Collection</p>
+          <h1 className="text-5xl md:text-6xl font-serif font-bold mb-4 animate-fade-in-up">
             All Products
           </h1>
-          <p className="text-gray-600">
+          <p className="text-xl text-cream-300 animate-fade-in-up stagger-2">
             Discover our complete collection of traditional brass and copper works
           </p>
         </div>
+      </section>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
 
         {/* Filters and View Toggle */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
@@ -129,7 +135,7 @@ export default function ProductsPage() {
 
         {/* Load More */}
         <div className="text-center mt-12">
-          <button className="bg-brass-gold text-white px-8 py-3 rounded-lg font-semibold hover:bg-primary-dark transition-colors">
+          <button className="btn-gold text-white px-8 py-4 rounded-xl font-semibold">
             Load More Products
           </button>
         </div>

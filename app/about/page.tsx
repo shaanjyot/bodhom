@@ -2,14 +2,17 @@ import { Award, Users, Heart, MapPin } from 'lucide-react'
 
 export default function AboutPage() {
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-cream-DEFAULT">
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-brass-gold via-primary-dark to-deep-maroon text-white py-20">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-5xl md:text-6xl font-serif font-bold mb-6">
+      <section className="relative bg-charcoal text-white pt-32 pb-20 overflow-hidden">
+        <div className="absolute inset-0 bg-[url('/slide0.webp')] bg-cover bg-center opacity-30"></div>
+        <div className="absolute inset-0 bg-gradient-to-b from-charcoal/80 via-charcoal/70 to-charcoal"></div>
+        <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <p className="text-brass-gold font-medium tracking-widest uppercase mb-4 animate-fade-in">Heritage & Tradition</p>
+          <h1 className="text-5xl md:text-6xl font-serif font-bold mb-6 animate-fade-in-up">
             Our Story
           </h1>
-          <p className="text-xl text-gray-100 leading-relaxed">
+          <p className="text-xl text-cream-300 leading-relaxed animate-fade-in-up stagger-2">
             Preserving the rich heritage of Odisha's traditional brass and copper craftsmanship
           </p>
         </div>

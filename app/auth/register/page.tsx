@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { Mail, Lock, Eye, EyeOff, User, Github } from 'lucide-react'
@@ -37,34 +38,53 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-sandstone-beige via-white to-sandstone-beige flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full">
-        {/* Logo Section */}
-        <div className="text-center mb-8">
-          <Link href="/" className="inline-flex items-center space-x-3 mb-4">
-            <div className="bg-gradient-to-br from-brass-gold to-primary-dark p-3 rounded-lg">
-              <span className="text-white font-serif text-3xl font-bold">ब</span>
-            </div>
-            <div>
-              <h1 className="text-3xl font-serif font-bold text-deep-maroon">BodhOm</h1>
-              <p className="text-sm text-gray-600">Traditional Craftsmanship</p>
-            </div>
-          </Link>
-          <h2 className="text-2xl font-serif font-bold text-gray-900">Create Account</h2>
-          <p className="mt-2 text-sm text-gray-600">Join us to discover traditional craftsmanship</p>
+    <div className="min-h-screen bg-cream-DEFAULT">
+      {/* Hero Section */}
+      <section className="relative bg-charcoal text-white pt-32 pb-16 overflow-hidden">
+        <div className="absolute inset-0">
+          <Image
+            src="/slide6.webp"
+            alt="Register background"
+            fill
+            className="object-cover opacity-30"
+          />
         </div>
+        <div className="absolute inset-0 bg-gradient-to-b from-charcoal/80 via-charcoal/70 to-charcoal"></div>
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <p className="text-brass-gold font-medium tracking-widest uppercase mb-4 animate-fade-in">Join Our Community</p>
+          <h1 className="text-5xl md:text-6xl font-serif font-bold mb-4 animate-fade-in-up">
+            Create Account
+          </h1>
+          <p className="text-xl text-cream-300 animate-fade-in-up stagger-2">
+            Discover traditional craftsmanship from Odisha
+          </p>
+        </div>
+      </section>
 
+      <div className="max-w-md mx-auto px-4 sm:px-6 lg:px-8 py-12 -mt-8">
         {/* Register Form */}
-        <div className="bg-white rounded-2xl shadow-elegant-lg p-8">
+        <div className="bg-white rounded-2xl shadow-soft-lg p-8 relative z-10">
+          {/* Logo */}
+          <div className="text-center mb-8">
+            <Link href="/" className="inline-flex items-center space-x-3">
+              <div className="bg-gradient-to-br from-brass-gold to-primary-dark p-2 rounded-lg">
+                <span className="text-white font-serif text-2xl font-bold">ब</span>
+              </div>
+              <div>
+                <h2 className="text-2xl font-serif font-bold text-charcoal">BodhOm</h2>
+              </div>
+            </Link>
+          </div>
+
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
             {/* Name Field */}
             <div>
-              <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="name" className="block text-sm font-medium text-charcoal mb-2">
                 Full Name
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <User className="h-5 w-5 text-gray-400" />
+                  <User className="h-5 w-5 text-charcoal-400" />
                 </div>
                 <input
                   {...register('name', {
@@ -76,7 +96,7 @@ export default function RegisterPage() {
                   })}
                   type="text"
                   id="name"
-                  className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brass-gold focus:border-brass-gold outline-none transition-colors"
+                  className="block w-full pl-10 pr-3 py-3 border border-cream-300 rounded-xl focus:ring-2 focus:ring-brass-gold focus:border-brass-gold outline-none transition-colors"
                   placeholder="Your full name"
                 />
               </div>
@@ -87,12 +107,12 @@ export default function RegisterPage() {
 
             {/* Email Field */}
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="email" className="block text-sm font-medium text-charcoal mb-2">
                 Email Address
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Mail className="h-5 w-5 text-gray-400" />
+                  <Mail className="h-5 w-5 text-charcoal-400" />
                 </div>
                 <input
                   {...register('email', {
@@ -104,7 +124,7 @@ export default function RegisterPage() {
                   })}
                   type="email"
                   id="email"
-                  className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brass-gold focus:border-brass-gold outline-none transition-colors"
+                  className="block w-full pl-10 pr-3 py-3 border border-cream-300 rounded-xl focus:ring-2 focus:ring-brass-gold focus:border-brass-gold outline-none transition-colors"
                   placeholder="your@email.com"
                 />
               </div>
@@ -115,12 +135,12 @@ export default function RegisterPage() {
 
             {/* Password Field */}
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="password" className="block text-sm font-medium text-charcoal mb-2">
                 Password
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Lock className="h-5 w-5 text-gray-400" />
+                  <Lock className="h-5 w-5 text-charcoal-400" />
                 </div>
                 <input
                   {...register('password', {
@@ -132,7 +152,7 @@ export default function RegisterPage() {
                   })}
                   type={showPassword ? 'text' : 'password'}
                   id="password"
-                  className="block w-full pl-10 pr-10 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brass-gold focus:border-brass-gold outline-none transition-colors"
+                  className="block w-full pl-10 pr-10 py-3 border border-cream-300 rounded-xl focus:ring-2 focus:ring-brass-gold focus:border-brass-gold outline-none transition-colors"
                   placeholder="Create a password"
                 />
                 <button
@@ -141,9 +161,9 @@ export default function RegisterPage() {
                   className="absolute inset-y-0 right-0 pr-3 flex items-center"
                 >
                   {showPassword ? (
-                    <EyeOff className="h-5 w-5 text-gray-400 hover:text-gray-600" />
+                    <EyeOff className="h-5 w-5 text-charcoal-400 hover:text-charcoal" />
                   ) : (
-                    <Eye className="h-5 w-5 text-gray-400 hover:text-gray-600" />
+                    <Eye className="h-5 w-5 text-charcoal-400 hover:text-charcoal" />
                   )}
                 </button>
               </div>
@@ -154,12 +174,12 @@ export default function RegisterPage() {
 
             {/* Confirm Password Field */}
             <div>
-              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="confirmPassword" className="block text-sm font-medium text-charcoal mb-2">
                 Confirm Password
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Lock className="h-5 w-5 text-gray-400" />
+                  <Lock className="h-5 w-5 text-charcoal-400" />
                 </div>
                 <input
                   {...register('confirmPassword', {
@@ -168,7 +188,7 @@ export default function RegisterPage() {
                   })}
                   type={showConfirmPassword ? 'text' : 'password'}
                   id="confirmPassword"
-                  className="block w-full pl-10 pr-10 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brass-gold focus:border-brass-gold outline-none transition-colors"
+                  className="block w-full pl-10 pr-10 py-3 border border-cream-300 rounded-xl focus:ring-2 focus:ring-brass-gold focus:border-brass-gold outline-none transition-colors"
                   placeholder="Confirm your password"
                 />
                 <button
@@ -177,9 +197,9 @@ export default function RegisterPage() {
                   className="absolute inset-y-0 right-0 pr-3 flex items-center"
                 >
                   {showConfirmPassword ? (
-                    <EyeOff className="h-5 w-5 text-gray-400 hover:text-gray-600" />
+                    <EyeOff className="h-5 w-5 text-charcoal-400 hover:text-charcoal" />
                   ) : (
-                    <Eye className="h-5 w-5 text-gray-400 hover:text-gray-600" />
+                    <Eye className="h-5 w-5 text-charcoal-400 hover:text-charcoal" />
                   )}
                 </button>
               </div>
@@ -195,9 +215,9 @@ export default function RegisterPage() {
                 name="terms"
                 type="checkbox"
                 required
-                className="h-4 w-4 text-brass-gold focus:ring-brass-gold border-gray-300 rounded mt-1"
+                className="h-4 w-4 text-brass-gold focus:ring-brass-gold border-cream-300 rounded mt-1"
               />
-              <label htmlFor="terms" className="ml-2 block text-sm text-gray-700">
+              <label htmlFor="terms" className="ml-2 block text-sm text-charcoal-500">
                 I agree to the{' '}
                 <Link href="/terms" className="text-brass-gold hover:text-primary-dark font-medium">
                   Terms & Conditions
@@ -213,7 +233,7 @@ export default function RegisterPage() {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full bg-gradient-to-r from-brass-gold to-primary-dark text-white py-3 px-4 rounded-lg font-semibold hover:from-primary-dark hover:to-brass-gold transition-all duration-300 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full btn-gold text-white py-3 px-4 rounded-xl font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isLoading ? 'Creating account...' : 'Create Account'}
             </button>
@@ -223,10 +243,10 @@ export default function RegisterPage() {
           <div className="mt-6">
             <div className="relative">
               <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-gray-300"></div>
+                <div className="w-full border-t border-cream-300"></div>
               </div>
               <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-white text-gray-500">Or continue with</span>
+                <span className="px-2 bg-white text-charcoal-400">Or continue with</span>
               </div>
             </div>
           </div>
@@ -235,7 +255,7 @@ export default function RegisterPage() {
           <div className="mt-6 grid grid-cols-2 gap-4">
             <button
               onClick={() => handleOAuthRegister('google')}
-              className="w-full inline-flex justify-center items-center py-3 px-4 border border-gray-300 rounded-lg shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+              className="w-full inline-flex justify-center items-center py-3 px-4 border border-cream-300 rounded-xl shadow-sm bg-white text-sm font-medium text-charcoal hover:bg-cream-100 transition-colors"
             >
               <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24">
                 <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
@@ -247,7 +267,7 @@ export default function RegisterPage() {
             </button>
             <button
               onClick={() => handleOAuthRegister('github')}
-              className="w-full inline-flex justify-center items-center py-3 px-4 border border-gray-300 rounded-lg shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+              className="w-full inline-flex justify-center items-center py-3 px-4 border border-cream-300 rounded-xl shadow-sm bg-white text-sm font-medium text-charcoal hover:bg-cream-100 transition-colors"
             >
               <Github className="w-5 h-5 mr-2" />
               GitHub
@@ -255,7 +275,7 @@ export default function RegisterPage() {
           </div>
 
           {/* Sign In Link */}
-          <p className="mt-6 text-center text-sm text-gray-600">
+          <p className="mt-6 text-center text-sm text-charcoal-500">
             Already have an account?{' '}
             <Link href="/auth/login" className="text-brass-gold hover:text-primary-dark font-semibold">
               Sign in
@@ -266,4 +286,3 @@ export default function RegisterPage() {
     </div>
   )
 }
-

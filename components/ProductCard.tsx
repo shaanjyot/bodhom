@@ -24,6 +24,7 @@ interface ProductCardProps {
 export default function ProductCard({ product }: ProductCardProps) {
   const { addItem } = useCart()
   const [isWishlisted, setIsWishlisted] = useState(false)
+  const [imageError, setImageError] = useState(false)
   const discount = product.originalPrice
     ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)
     : 0
@@ -47,34 +48,46 @@ export default function ProductCard({ product }: ProductCardProps) {
 
   return (
     <Link href={`/products/${product.id}`} className="group">
-      <div className="bg-white rounded-xl shadow-elegant hover:shadow-elegant-lg transition-all duration-300 overflow-hidden">
+      <div className="bg-white rounded-2xl shadow-soft hover:shadow-soft-lg transition-all duration-500 overflow-hidden card-glow">
         {/* Image Container */}
-        <div className="relative aspect-square bg-gradient-to-br from-sandstone-beige to-white overflow-hidden">
+        <div className="relative aspect-square overflow-hidden bg-cream-100">
           {product.badge && (
-            <span className="absolute top-4 left-4 bg-sacred-saffron text-white px-3 py-1 rounded-full text-xs font-semibold z-10">
+            <span className="absolute top-4 left-4 bg-brass-gold text-white px-3 py-1 rounded-full text-xs font-semibold z-10">
               {product.badge}
             </span>
           )}
           {discount > 0 && (
-            <span className="absolute top-4 right-4 bg-bodhi-green text-white px-3 py-1 rounded-full text-xs font-semibold z-10">
+            <span className="absolute top-4 right-4 bg-charcoal text-white px-3 py-1 rounded-full text-xs font-semibold z-10">
               -{discount}%
             </span>
           )}
           <button
             onClick={handleWishlist}
-            className="absolute top-4 right-4 z-10 p-2 bg-white rounded-full shadow-md opacity-0 group-hover:opacity-100 transition-opacity hover:bg-gray-50"
+            className="absolute top-14 right-4 z-10 p-2 bg-white rounded-full shadow-md opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-cream-100"
           >
-            <Heart className={`w-5 h-5 ${isWishlisted ? 'fill-red-500 text-red-500' : 'text-gray-600'}`} />
+            <Heart className={`w-5 h-5 ${isWishlisted ? 'fill-red-500 text-red-500' : 'text-charcoal-400'}`} />
           </button>
-          <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-brass-gold/10 to-primary-dark/10">
-            <span className="text-6xl">🏺</span>
-          </div>
-          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors"></div>
+          
+          {!imageError ? (
+            <Image
+              src={product.image}
+              alt={product.name}
+              fill
+              className="object-cover transition-transform duration-700 group-hover:scale-110"
+              onError={() => setImageError(true)}
+            />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-cream-200 to-cream-100">
+              <span className="text-6xl">🏺</span>
+            </div>
+          )}
+          
+          <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
         </div>
 
         {/* Product Info */}
         <div className="p-5">
-          <h3 className="font-semibold text-gray-900 mb-2 group-hover:text-brass-gold transition-colors line-clamp-2">
+          <h3 className="font-serif text-lg font-semibold text-charcoal mb-2 group-hover:text-brass-gold transition-colors line-clamp-2">
             {product.name}
           </h3>
 
@@ -86,24 +99,24 @@ export default function ProductCard({ product }: ProductCardProps) {
                   key={i}
                   className={`w-4 h-4 ${
                     i < Math.floor(product.rating)
-                      ? 'fill-sacred-saffron text-sacred-saffron'
-                      : 'text-gray-300'
+                      ? 'fill-brass-gold text-brass-gold'
+                      : 'text-cream-400'
                   }`}
                 />
               ))}
             </div>
-            <span className="text-sm text-gray-600">
+            <span className="text-sm text-charcoal-400">
               {product.rating} ({product.reviews})
             </span>
           </div>
 
           {/* Price */}
           <div className="flex items-baseline gap-2 mb-4">
-            <span className="text-2xl font-bold text-deep-maroon">
+            <span className="text-2xl font-bold text-charcoal">
               ₹{product.price.toLocaleString()}
             </span>
             {product.originalPrice && (
-              <span className="text-sm text-gray-500 line-through">
+              <span className="text-sm text-charcoal-400 line-through">
                 ₹{product.originalPrice.toLocaleString()}
               </span>
             )}
@@ -112,7 +125,7 @@ export default function ProductCard({ product }: ProductCardProps) {
           {/* Add to Cart Button */}
           <button
             onClick={handleAddToCart}
-            className="w-full bg-gradient-to-r from-brass-gold to-primary-dark text-white py-3 px-4 rounded-lg font-semibold hover:from-primary-dark hover:to-brass-gold transition-all duration-300 flex items-center justify-center gap-2"
+            className="w-full btn-gold text-white py-3 px-4 rounded-xl font-semibold flex items-center justify-center gap-2"
           >
             <ShoppingCart className="w-5 h-5" />
             Add to Cart
@@ -122,4 +135,3 @@ export default function ProductCard({ product }: ProductCardProps) {
     </Link>
   )
 }
-

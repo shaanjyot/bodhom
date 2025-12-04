@@ -29,22 +29,28 @@ export default function ContactPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header */}
-        <div className="text-center mb-12">
-          <h1 className="text-4xl md:text-5xl font-serif font-bold text-deep-maroon mb-4">
+    <div className="min-h-screen bg-cream-DEFAULT">
+      {/* Hero Section */}
+      <section className="relative bg-charcoal text-white pt-32 pb-16 overflow-hidden">
+        <div className="absolute inset-0 bg-[url('/slide3.webp')] bg-cover bg-center opacity-30"></div>
+        <div className="absolute inset-0 bg-gradient-to-b from-charcoal/80 via-charcoal/70 to-charcoal"></div>
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <p className="text-brass-gold font-medium tracking-widest uppercase mb-4 animate-fade-in">We're Here to Help</p>
+          <h1 className="text-5xl md:text-6xl font-serif font-bold mb-4 animate-fade-in-up">
             Get in Touch
           </h1>
-          <p className="text-lg text-gray-600">
+          <p className="text-xl text-cream-300 animate-fade-in-up stagger-2">
             We'd love to hear from you. Send us a message and we'll respond as soon as possible.
           </p>
         </div>
+      </section>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Contact Info */}
           <div className="lg:col-span-1 space-y-6">
-            <div className="bg-white rounded-xl shadow-elegant p-6">
+            <div className="bg-white rounded-2xl shadow-soft p-6">
               <div className="flex items-start gap-4">
                 <div className="w-12 h-12 bg-brass-gold rounded-lg flex items-center justify-center flex-shrink-0">
                   <Mail className="w-6 h-6 text-white" />
@@ -58,7 +64,7 @@ export default function ContactPage() {
               </div>
             </div>
 
-            <div className="bg-white rounded-xl shadow-elegant p-6">
+            <div className="bg-white rounded-2xl shadow-soft p-6">
               <div className="flex items-start gap-4">
                 <div className="w-12 h-12 bg-brass-gold rounded-lg flex items-center justify-center flex-shrink-0">
                   <Phone className="w-6 h-6 text-white" />
@@ -72,7 +78,7 @@ export default function ContactPage() {
               </div>
             </div>
 
-            <div className="bg-white rounded-xl shadow-elegant p-6">
+            <div className="bg-white rounded-2xl shadow-soft p-6">
               <div className="flex items-start gap-4">
                 <div className="w-12 h-12 bg-brass-gold rounded-lg flex items-center justify-center flex-shrink-0">
                   <MapPin className="w-6 h-6 text-white" />
@@ -90,7 +96,7 @@ export default function ContactPage() {
 
           {/* Contact Form */}
           <div className="lg:col-span-2">
-            <div className="bg-white rounded-xl shadow-elegant-lg p-8">
+            <div className="bg-white rounded-2xl shadow-soft-lg p-8">
               {submitSuccess && (
                 <div className="mb-6 p-4 bg-bodhi-green/10 border border-bodhi-green rounded-lg text-bodhi-green">
                   Thank you! Your message has been sent successfully. We'll get back to you soon.
@@ -200,7 +206,7 @@ export default function ContactPage() {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full bg-gradient-to-r from-brass-gold to-primary-dark text-white py-4 px-6 rounded-lg font-semibold hover:from-primary-dark hover:to-brass-gold transition-all duration-300 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full btn-gold text-white py-4 px-6 rounded-xl font-semibold flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <Send className="w-5 h-5" />
                   {isSubmitting ? 'Sending...' : 'Send Message'}
