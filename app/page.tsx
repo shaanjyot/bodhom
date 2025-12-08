@@ -407,8 +407,59 @@ export default function HomePage() {
       </section>
 
       {/* Categories Section */}
-      <section className="py-20 bg-cream-100">
-        <div className="container-elegant">
+      <section className="py-20 bg-cream-100 relative overflow-hidden">
+        {/* Animated Tribal Pattern Background */}
+        <div className="absolute inset-0 opacity-[0.08] pointer-events-none">
+          <div className="tribal-pattern-scroll absolute inset-0 w-full" style={{ height: '200%' }}>
+            <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" preserveAspectRatio="none">
+              <defs>
+                <pattern id="tribalPattern" x="0" y="0" width="100" height="100" patternUnits="userSpaceOnUse">
+                  {/* Central Mandala/Dhokra inspired motif */}
+                  <circle cx="50" cy="50" r="35" fill="none" stroke="#8B6914" strokeWidth="1.5"/>
+                  <circle cx="50" cy="50" r="25" fill="none" stroke="#8B6914" strokeWidth="1"/>
+                  <circle cx="50" cy="50" r="15" fill="none" stroke="#8B6914" strokeWidth="1.5"/>
+                  <circle cx="50" cy="50" r="5" fill="#8B6914"/>
+                  
+                  {/* Radiating tribal lines */}
+                  <line x1="50" y1="15" x2="50" y2="0" stroke="#8B6914" strokeWidth="1.5"/>
+                  <line x1="50" y1="85" x2="50" y2="100" stroke="#8B6914" strokeWidth="1.5"/>
+                  <line x1="15" y1="50" x2="0" y2="50" stroke="#8B6914" strokeWidth="1.5"/>
+                  <line x1="85" y1="50" x2="100" y2="50" stroke="#8B6914" strokeWidth="1.5"/>
+                  
+                  {/* Diagonal tribal accents */}
+                  <line x1="25" y1="25" x2="15" y2="15" stroke="#8B6914" strokeWidth="1"/>
+                  <line x1="75" y1="25" x2="85" y2="15" stroke="#8B6914" strokeWidth="1"/>
+                  <line x1="25" y1="75" x2="15" y2="85" stroke="#8B6914" strokeWidth="1"/>
+                  <line x1="75" y1="75" x2="85" y2="85" stroke="#8B6914" strokeWidth="1"/>
+                  
+                  {/* Dhokra-style decorative elements */}
+                  <path d="M50 20 L55 30 L50 25 L45 30 Z" fill="#8B6914"/>
+                  <path d="M50 80 L55 70 L50 75 L45 70 Z" fill="#8B6914"/>
+                  <path d="M20 50 L30 45 L25 50 L30 55 Z" fill="#8B6914"/>
+                  <path d="M80 50 L70 45 L75 50 L70 55 Z" fill="#8B6914"/>
+                  
+                  {/* Corner dots - tribal style */}
+                  <circle cx="10" cy="10" r="3" fill="#8B6914"/>
+                  <circle cx="90" cy="10" r="3" fill="#8B6914"/>
+                  <circle cx="10" cy="90" r="3" fill="#8B6914"/>
+                  <circle cx="90" cy="90" r="3" fill="#8B6914"/>
+                  
+                  {/* Small decorative rings */}
+                  <circle cx="50" cy="10" r="4" fill="none" stroke="#8B6914" strokeWidth="1"/>
+                  <circle cx="50" cy="90" r="4" fill="none" stroke="#8B6914" strokeWidth="1"/>
+                  <circle cx="10" cy="50" r="4" fill="none" stroke="#8B6914" strokeWidth="1"/>
+                  <circle cx="90" cy="50" r="4" fill="none" stroke="#8B6914" strokeWidth="1"/>
+                </pattern>
+              </defs>
+              <rect width="100%" height="100%" fill="url(#tribalPattern)"/>
+            </svg>
+          </div>
+        </div>
+        
+        {/* Gradient overlays for depth */}
+        <div className="absolute inset-0 bg-gradient-to-b from-cream-100 via-transparent to-cream-100 pointer-events-none z-[1]"></div>
+        
+        <div className="container-elegant relative z-10">
           <div className="text-center mb-14">
             <p className="text-brass-gold font-medium tracking-widest uppercase mb-3 animate-fade-in">Curated Collections</p>
             <h2 className="text-4xl md:text-5xl font-serif font-bold text-charcoal mb-4">
@@ -416,7 +467,7 @@ export default function HomePage() {
             </h2>
             <div className="section-divider mt-6"></div>
           </div>
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 relative z-10">
             {categories.map((category, index) => (
               <Link
                 key={index}
@@ -447,8 +498,106 @@ export default function HomePage() {
       </section>
 
       {/* Featured Products Slider Section */}
-      <section className="py-20 bg-cream-DEFAULT">
-        <div className="container-elegant">
+      <section className="py-20 bg-cream-DEFAULT relative overflow-hidden">
+        {/* Animated Mandala Pattern - Pulsing Wave Effect */}
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="tribal-pattern-pulse absolute inset-0 opacity-[0.06]">
+            <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" preserveAspectRatio="xMidYMid slice">
+              <defs>
+                <pattern id="productMandalaPattern" x="0" y="0" width="180" height="180" patternUnits="userSpaceOnUse">
+                  {/* Large central mandala */}
+                  <g transform="translate(90,90)">
+                    {/* Outer ornate ring */}
+                    <circle cx="0" cy="0" r="70" fill="none" stroke="#8B6914" strokeWidth="1" strokeDasharray="8 4"/>
+                    <circle cx="0" cy="0" r="60" fill="none" stroke="#8B6914" strokeWidth="1.5"/>
+                    <circle cx="0" cy="0" r="50" fill="none" stroke="#8B6914" strokeWidth="1"/>
+                    
+                    {/* 12 petals radiating outward */}
+                    <g transform="rotate(0)"><ellipse cx="0" cy="-40" rx="6" ry="15" fill="none" stroke="#8B6914" strokeWidth="1.2"/><line x1="0" y1="-55" x2="0" y2="-70" stroke="#8B6914" strokeWidth="1"/><circle cx="0" cy="-72" r="2" fill="#8B6914"/></g>
+                    <g transform="rotate(30)"><ellipse cx="0" cy="-40" rx="6" ry="15" fill="none" stroke="#8B6914" strokeWidth="1.2"/><line x1="0" y1="-55" x2="0" y2="-70" stroke="#8B6914" strokeWidth="1"/><circle cx="0" cy="-72" r="2" fill="#8B6914"/></g>
+                    <g transform="rotate(60)"><ellipse cx="0" cy="-40" rx="6" ry="15" fill="none" stroke="#8B6914" strokeWidth="1.2"/><line x1="0" y1="-55" x2="0" y2="-70" stroke="#8B6914" strokeWidth="1"/><circle cx="0" cy="-72" r="2" fill="#8B6914"/></g>
+                    <g transform="rotate(90)"><ellipse cx="0" cy="-40" rx="6" ry="15" fill="none" stroke="#8B6914" strokeWidth="1.2"/><line x1="0" y1="-55" x2="0" y2="-70" stroke="#8B6914" strokeWidth="1"/><circle cx="0" cy="-72" r="2" fill="#8B6914"/></g>
+                    <g transform="rotate(120)"><ellipse cx="0" cy="-40" rx="6" ry="15" fill="none" stroke="#8B6914" strokeWidth="1.2"/><line x1="0" y1="-55" x2="0" y2="-70" stroke="#8B6914" strokeWidth="1"/><circle cx="0" cy="-72" r="2" fill="#8B6914"/></g>
+                    <g transform="rotate(150)"><ellipse cx="0" cy="-40" rx="6" ry="15" fill="none" stroke="#8B6914" strokeWidth="1.2"/><line x1="0" y1="-55" x2="0" y2="-70" stroke="#8B6914" strokeWidth="1"/><circle cx="0" cy="-72" r="2" fill="#8B6914"/></g>
+                    <g transform="rotate(180)"><ellipse cx="0" cy="-40" rx="6" ry="15" fill="none" stroke="#8B6914" strokeWidth="1.2"/><line x1="0" y1="-55" x2="0" y2="-70" stroke="#8B6914" strokeWidth="1"/><circle cx="0" cy="-72" r="2" fill="#8B6914"/></g>
+                    <g transform="rotate(210)"><ellipse cx="0" cy="-40" rx="6" ry="15" fill="none" stroke="#8B6914" strokeWidth="1.2"/><line x1="0" y1="-55" x2="0" y2="-70" stroke="#8B6914" strokeWidth="1"/><circle cx="0" cy="-72" r="2" fill="#8B6914"/></g>
+                    <g transform="rotate(240)"><ellipse cx="0" cy="-40" rx="6" ry="15" fill="none" stroke="#8B6914" strokeWidth="1.2"/><line x1="0" y1="-55" x2="0" y2="-70" stroke="#8B6914" strokeWidth="1"/><circle cx="0" cy="-72" r="2" fill="#8B6914"/></g>
+                    <g transform="rotate(270)"><ellipse cx="0" cy="-40" rx="6" ry="15" fill="none" stroke="#8B6914" strokeWidth="1.2"/><line x1="0" y1="-55" x2="0" y2="-70" stroke="#8B6914" strokeWidth="1"/><circle cx="0" cy="-72" r="2" fill="#8B6914"/></g>
+                    <g transform="rotate(300)"><ellipse cx="0" cy="-40" rx="6" ry="15" fill="none" stroke="#8B6914" strokeWidth="1.2"/><line x1="0" y1="-55" x2="0" y2="-70" stroke="#8B6914" strokeWidth="1"/><circle cx="0" cy="-72" r="2" fill="#8B6914"/></g>
+                    <g transform="rotate(330)"><ellipse cx="0" cy="-40" rx="6" ry="15" fill="none" stroke="#8B6914" strokeWidth="1.2"/><line x1="0" y1="-55" x2="0" y2="-70" stroke="#8B6914" strokeWidth="1"/><circle cx="0" cy="-72" r="2" fill="#8B6914"/></g>
+                    
+                    {/* Inner decorative rings */}
+                    <circle cx="0" cy="0" r="35" fill="none" stroke="#8B6914" strokeWidth="1" strokeDasharray="4 2"/>
+                    <circle cx="0" cy="0" r="25" fill="none" stroke="#8B6914" strokeWidth="1.5"/>
+                    <circle cx="0" cy="0" r="15" fill="none" stroke="#8B6914" strokeWidth="1"/>
+                    <circle cx="0" cy="0" r="5" fill="#8B6914"/>
+                    
+                    {/* 8 radiating spokes */}
+                    <line x1="0" y1="0" x2="35" y2="0" stroke="#8B6914" strokeWidth="0.5" opacity="0.5"/>
+                    <line x1="0" y1="0" x2="24.7" y2="24.7" stroke="#8B6914" strokeWidth="0.5" opacity="0.5"/>
+                    <line x1="0" y1="0" x2="0" y2="35" stroke="#8B6914" strokeWidth="0.5" opacity="0.5"/>
+                    <line x1="0" y1="0" x2="-24.7" y2="24.7" stroke="#8B6914" strokeWidth="0.5" opacity="0.5"/>
+                    <line x1="0" y1="0" x2="-35" y2="0" stroke="#8B6914" strokeWidth="0.5" opacity="0.5"/>
+                    <line x1="0" y1="0" x2="-24.7" y2="-24.7" stroke="#8B6914" strokeWidth="0.5" opacity="0.5"/>
+                    <line x1="0" y1="0" x2="0" y2="-35" stroke="#8B6914" strokeWidth="0.5" opacity="0.5"/>
+                    <line x1="0" y1="0" x2="24.7" y2="-24.7" stroke="#8B6914" strokeWidth="0.5" opacity="0.5"/>
+                  </g>
+                  
+                  {/* Corner tribal knots */}
+                  <g fill="none" stroke="#8B6914" strokeWidth="1">
+                    {/* Top-left */}
+                    <path d="M5 5 Q20 5 20 20 Q20 35 5 35 Q5 20 5 5"/>
+                    <circle cx="12" cy="20" r="3"/>
+                    
+                    {/* Top-right */}
+                    <path d="M175 5 Q160 5 160 20 Q160 35 175 35 Q175 20 175 5"/>
+                    <circle cx="168" cy="20" r="3"/>
+                    
+                    {/* Bottom-left */}
+                    <path d="M5 175 Q20 175 20 160 Q20 145 5 145 Q5 160 5 175"/>
+                    <circle cx="12" cy="160" r="3"/>
+                    
+                    {/* Bottom-right */}
+                    <path d="M175 175 Q160 175 160 160 Q160 145 175 145 Q175 160 175 175"/>
+                    <circle cx="168" cy="160" r="3"/>
+                  </g>
+                  
+                  {/* Edge decorative lines */}
+                  <line x1="40" y1="0" x2="140" y2="0" stroke="#8B6914" strokeWidth="1" opacity="0.3"/>
+                  <line x1="40" y1="180" x2="140" y2="180" stroke="#8B6914" strokeWidth="1" opacity="0.3"/>
+                  <line x1="0" y1="40" x2="0" y2="140" stroke="#8B6914" strokeWidth="1" opacity="0.3"/>
+                  <line x1="180" y1="40" x2="180" y2="140" stroke="#8B6914" strokeWidth="1" opacity="0.3"/>
+                </pattern>
+              </defs>
+              <rect width="100%" height="100%" fill="url(#productMandalaPattern)"/>
+            </svg>
+          </div>
+          
+          {/* Secondary floating dots layer */}
+          <div className="tribal-pattern-drift absolute inset-0 opacity-[0.04]">
+            <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 400" preserveAspectRatio="xMidYMid slice">
+              <defs>
+                <pattern id="productFloatingDots" x="0" y="0" width="100" height="100" patternUnits="userSpaceOnUse">
+                  <circle cx="50" cy="50" r="2" fill="#8B6914"/>
+                  <circle cx="25" cy="25" r="1.5" fill="#8B6914"/>
+                  <circle cx="75" cy="25" r="1.5" fill="#8B6914"/>
+                  <circle cx="25" cy="75" r="1.5" fill="#8B6914"/>
+                  <circle cx="75" cy="75" r="1.5" fill="#8B6914"/>
+                  <circle cx="50" cy="10" r="1" fill="#8B6914"/>
+                  <circle cx="50" cy="90" r="1" fill="#8B6914"/>
+                  <circle cx="10" cy="50" r="1" fill="#8B6914"/>
+                  <circle cx="90" cy="50" r="1" fill="#8B6914"/>
+                </pattern>
+              </defs>
+              <rect width="100%" height="100%" fill="url(#productFloatingDots)"/>
+            </svg>
+          </div>
+        </div>
+        
+        {/* Gradient overlay */}
+        <div className="absolute inset-0 bg-gradient-to-r from-cream-DEFAULT via-transparent to-cream-DEFAULT pointer-events-none z-[1]"></div>
+        
+        <div className="container-elegant relative z-10">
           <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-14">
             <div>
               <p className="text-brass-gold font-medium tracking-widest uppercase mb-3">Handpicked for You</p>
@@ -508,8 +657,67 @@ export default function HomePage() {
       </section>
 
       {/* Why Choose Us Section */}
-      <section className="py-20 bg-sand-DEFAULT">
-        <div className="container-elegant">
+      <section className="py-20 bg-sand-DEFAULT relative overflow-hidden">
+        {/* Animated Geometric Tribal Pattern - Diagonal Movement */}
+        <div className="absolute inset-0 opacity-[0.07] pointer-events-none">
+          <div className="tribal-pattern-diagonal absolute" style={{ width: '200%', height: '200%', top: '-50%', left: '-50%' }}>
+            <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600" preserveAspectRatio="none">
+              <defs>
+                <pattern id="geometricTribalPattern" x="0" y="0" width="100" height="100" patternUnits="userSpaceOnUse">
+                  {/* Central diamond with tribal fill */}
+                  <path d="M50 10 L90 50 L50 90 L10 50 Z" fill="none" stroke="#7A5C10" strokeWidth="2"/>
+                  <path d="M50 20 L80 50 L50 80 L20 50 Z" fill="none" stroke="#7A5C10" strokeWidth="1.5"/>
+                  <path d="M50 30 L70 50 L50 70 L30 50 Z" fill="none" stroke="#7A5C10" strokeWidth="1"/>
+                  <circle cx="50" cy="50" r="8" fill="none" stroke="#7A5C10" strokeWidth="1.5"/>
+                  <circle cx="50" cy="50" r="3" fill="#7A5C10"/>
+                  
+                  {/* Corner stepped pyramids - Odisha temple style */}
+                  <g fill="#7A5C10">
+                    <rect x="0" y="0" width="15" height="5"/>
+                    <rect x="3" y="5" width="9" height="4"/>
+                    <rect x="5" y="9" width="5" height="3"/>
+                    
+                    <rect x="85" y="0" width="15" height="5"/>
+                    <rect x="88" y="5" width="9" height="4"/>
+                    <rect x="90" y="9" width="5" height="3"/>
+                    
+                    <rect x="0" y="95" width="15" height="5"/>
+                    <rect x="3" y="91" width="9" height="4"/>
+                    <rect x="5" y="88" width="5" height="3"/>
+                    
+                    <rect x="85" y="95" width="15" height="5"/>
+                    <rect x="88" y="91" width="9" height="4"/>
+                    <rect x="90" y="88" width="5" height="3"/>
+                  </g>
+                  
+                  {/* Tribal dots arrangement */}
+                  <circle cx="50" cy="5" r="2" fill="#7A5C10"/>
+                  <circle cx="50" cy="95" r="2" fill="#7A5C10"/>
+                  <circle cx="5" cy="50" r="2" fill="#7A5C10"/>
+                  <circle cx="95" cy="50" r="2" fill="#7A5C10"/>
+                  
+                  {/* Connecting tribal lines */}
+                  <line x1="15" y1="15" x2="25" y2="25" stroke="#7A5C10" strokeWidth="1"/>
+                  <line x1="85" y1="15" x2="75" y2="25" stroke="#7A5C10" strokeWidth="1"/>
+                  <line x1="15" y1="85" x2="25" y2="75" stroke="#7A5C10" strokeWidth="1"/>
+                  <line x1="85" y1="85" x2="75" y2="75" stroke="#7A5C10" strokeWidth="1"/>
+                  
+                  {/* Small decorative crescents */}
+                  <path d="M25 50 Q30 45 35 50 Q30 55 25 50" fill="none" stroke="#7A5C10" strokeWidth="1"/>
+                  <path d="M65 50 Q70 45 75 50 Q70 55 65 50" fill="none" stroke="#7A5C10" strokeWidth="1"/>
+                  <path d="M50 25 Q45 30 50 35 Q55 30 50 25" fill="none" stroke="#7A5C10" strokeWidth="1"/>
+                  <path d="M50 65 Q45 70 50 75 Q55 70 50 65" fill="none" stroke="#7A5C10" strokeWidth="1"/>
+                </pattern>
+              </defs>
+              <rect width="100%" height="100%" fill="url(#geometricTribalPattern)"/>
+            </svg>
+          </div>
+        </div>
+        
+        {/* Radial gradient overlay for depth */}
+        <div className="absolute inset-0 bg-gradient-radial from-transparent via-sand-DEFAULT/50 to-sand-DEFAULT pointer-events-none z-[1]"></div>
+        
+        <div className="container-elegant relative z-10">
           <div className="text-center mb-14">
             <p className="text-brass-gold font-medium tracking-widest uppercase mb-3">Our Promise</p>
             <h2 className="text-4xl md:text-5xl font-serif font-bold text-charcoal mb-4">
@@ -517,7 +725,7 @@ export default function HomePage() {
             </h2>
             <div className="section-divider mt-6"></div>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative z-10">
             {[
               { icon: '✨', title: 'Authentic Craftsmanship', desc: 'Each piece is handcrafted by skilled artisans from Odisha, preserving traditional techniques passed down through generations.' },
               { icon: '🚚', title: 'Free Shipping', desc: 'Enjoy complimentary shipping on orders above ₹999 across India. Fast, secure, and carefully packaged delivery.' },
@@ -541,8 +749,71 @@ export default function HomePage() {
 
       {/* Testimonials Section */}
       <section className="py-20 bg-cream-DEFAULT relative overflow-hidden">
+        {/* Animated Lotus/Paisley Pattern - Floating Effect */}
+        <div className="absolute inset-0 opacity-[0.05] pointer-events-none">
+          <div className="tribal-pattern-float absolute inset-0">
+            <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" preserveAspectRatio="none">
+              <defs>
+                <pattern id="lotusPattern" x="0" y="0" width="150" height="150" patternUnits="userSpaceOnUse">
+                  {/* Central Lotus Flower */}
+                  <g transform="translate(75,75)">
+                    {/* Outer petals */}
+                    <ellipse cx="0" cy="-30" rx="8" ry="20" fill="none" stroke="#8B6914" strokeWidth="1.5"/>
+                    <ellipse cx="0" cy="30" rx="8" ry="20" fill="none" stroke="#8B6914" strokeWidth="1.5" transform="rotate(180)"/>
+                    <ellipse cx="-30" cy="0" rx="8" ry="20" fill="none" stroke="#8B6914" strokeWidth="1.5" transform="rotate(90)"/>
+                    <ellipse cx="30" cy="0" rx="8" ry="20" fill="none" stroke="#8B6914" strokeWidth="1.5" transform="rotate(-90)"/>
+                    
+                    {/* Diagonal petals */}
+                    <ellipse cx="-21" cy="-21" rx="6" ry="16" fill="none" stroke="#8B6914" strokeWidth="1.2" transform="rotate(-45 -21 -21)"/>
+                    <ellipse cx="21" cy="-21" rx="6" ry="16" fill="none" stroke="#8B6914" strokeWidth="1.2" transform="rotate(45 21 -21)"/>
+                    <ellipse cx="-21" cy="21" rx="6" ry="16" fill="none" stroke="#8B6914" strokeWidth="1.2" transform="rotate(45 -21 21)"/>
+                    <ellipse cx="21" cy="21" rx="6" ry="16" fill="none" stroke="#8B6914" strokeWidth="1.2" transform="rotate(-45 21 21)"/>
+                    
+                    {/* Center circles */}
+                    <circle cx="0" cy="0" r="12" fill="none" stroke="#8B6914" strokeWidth="1.5"/>
+                    <circle cx="0" cy="0" r="6" fill="none" stroke="#8B6914" strokeWidth="1"/>
+                    <circle cx="0" cy="0" r="2" fill="#8B6914"/>
+                  </g>
+                  
+                  {/* Paisley corners */}
+                  <g fill="none" stroke="#8B6914" strokeWidth="1.2">
+                    <path d="M10 10 Q25 5 30 20 Q35 35 20 35 Q5 35 10 20 Q12 12 10 10"/>
+                    <path d="M15 18 Q22 15 25 22"/>
+                    
+                    <path d="M140 10 Q125 5 120 20 Q115 35 130 35 Q145 35 140 20 Q138 12 140 10"/>
+                    <path d="M135 18 Q128 15 125 22"/>
+                    
+                    <path d="M10 140 Q25 145 30 130 Q35 115 20 115 Q5 115 10 130 Q12 138 10 140"/>
+                    <path d="M15 132 Q22 135 25 128"/>
+                    
+                    <path d="M140 140 Q125 145 120 130 Q115 115 130 115 Q145 115 140 130 Q138 138 140 140"/>
+                    <path d="M135 132 Q128 135 125 128"/>
+                  </g>
+                  
+                  {/* Decorative dots */}
+                  <circle cx="75" cy="10" r="3" fill="#8B6914"/>
+                  <circle cx="75" cy="140" r="3" fill="#8B6914"/>
+                  <circle cx="10" cy="75" r="3" fill="#8B6914"/>
+                  <circle cx="140" cy="75" r="3" fill="#8B6914"/>
+                  
+                  {/* Curved connecting lines */}
+                  <path d="M45 10 Q50 25 55 10" fill="none" stroke="#8B6914" strokeWidth="1"/>
+                  <path d="M95 10 Q100 25 105 10" fill="none" stroke="#8B6914" strokeWidth="1"/>
+                  <path d="M45 140 Q50 125 55 140" fill="none" stroke="#8B6914" strokeWidth="1"/>
+                  <path d="M95 140 Q100 125 105 140" fill="none" stroke="#8B6914" strokeWidth="1"/>
+                </pattern>
+              </defs>
+              <rect width="100%" height="100%" fill="url(#lotusPattern)"/>
+            </svg>
+          </div>
+        </div>
+        
+        {/* Ambient glow effects */}
         <div className="absolute top-0 left-0 w-64 h-64 bg-brass-gold/5 rounded-full blur-3xl"></div>
         <div className="absolute bottom-0 right-0 w-96 h-96 bg-brass-gold/5 rounded-full blur-3xl"></div>
+        
+        {/* Gradient overlay */}
+        <div className="absolute inset-0 bg-gradient-to-b from-cream-DEFAULT/80 via-transparent to-cream-DEFAULT/80 pointer-events-none z-[1]"></div>
         
         <div className="container-elegant relative z-10">
           <div className="text-center mb-14">
@@ -553,7 +824,7 @@ export default function HomePage() {
             <div className="section-divider mt-6"></div>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative z-10">
             {testimonials.map((testimonial, index) => (
               <div 
                 key={testimonial.id}
@@ -706,10 +977,109 @@ export default function HomePage() {
 
       {/* Newsletter Section */}
       <section className="py-20 bg-charcoal text-white relative overflow-hidden">
-        <div className="absolute inset-0 opacity-10">
+        {/* Animated White Tribal Pattern - Rotating Mandala Effect */}
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="tribal-pattern-rotate absolute inset-0 opacity-[0.04]">
+            <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" preserveAspectRatio="xMidYMid slice">
+              <defs>
+                <pattern id="whiteTribalPattern" x="0" y="0" width="180" height="180" patternUnits="userSpaceOnUse">
+                  {/* Large central mandala */}
+                  <g transform="translate(90,90)">
+                    {/* Outer ornate ring */}
+                    <circle cx="0" cy="0" r="70" fill="none" stroke="#FFFFFF" strokeWidth="1" strokeDasharray="8 4"/>
+                    <circle cx="0" cy="0" r="60" fill="none" stroke="#FFFFFF" strokeWidth="1.5"/>
+                    <circle cx="0" cy="0" r="50" fill="none" stroke="#FFFFFF" strokeWidth="1"/>
+                    
+                    {/* 12 petals radiating outward */}
+                    <g transform="rotate(0)"><ellipse cx="0" cy="-40" rx="6" ry="15" fill="none" stroke="#FFFFFF" strokeWidth="1.2"/><line x1="0" y1="-55" x2="0" y2="-70" stroke="#FFFFFF" strokeWidth="1"/><circle cx="0" cy="-72" r="2" fill="#FFFFFF"/></g>
+                    <g transform="rotate(30)"><ellipse cx="0" cy="-40" rx="6" ry="15" fill="none" stroke="#FFFFFF" strokeWidth="1.2"/><line x1="0" y1="-55" x2="0" y2="-70" stroke="#FFFFFF" strokeWidth="1"/><circle cx="0" cy="-72" r="2" fill="#FFFFFF"/></g>
+                    <g transform="rotate(60)"><ellipse cx="0" cy="-40" rx="6" ry="15" fill="none" stroke="#FFFFFF" strokeWidth="1.2"/><line x1="0" y1="-55" x2="0" y2="-70" stroke="#FFFFFF" strokeWidth="1"/><circle cx="0" cy="-72" r="2" fill="#FFFFFF"/></g>
+                    <g transform="rotate(90)"><ellipse cx="0" cy="-40" rx="6" ry="15" fill="none" stroke="#FFFFFF" strokeWidth="1.2"/><line x1="0" y1="-55" x2="0" y2="-70" stroke="#FFFFFF" strokeWidth="1"/><circle cx="0" cy="-72" r="2" fill="#FFFFFF"/></g>
+                    <g transform="rotate(120)"><ellipse cx="0" cy="-40" rx="6" ry="15" fill="none" stroke="#FFFFFF" strokeWidth="1.2"/><line x1="0" y1="-55" x2="0" y2="-70" stroke="#FFFFFF" strokeWidth="1"/><circle cx="0" cy="-72" r="2" fill="#FFFFFF"/></g>
+                    <g transform="rotate(150)"><ellipse cx="0" cy="-40" rx="6" ry="15" fill="none" stroke="#FFFFFF" strokeWidth="1.2"/><line x1="0" y1="-55" x2="0" y2="-70" stroke="#FFFFFF" strokeWidth="1"/><circle cx="0" cy="-72" r="2" fill="#FFFFFF"/></g>
+                    <g transform="rotate(180)"><ellipse cx="0" cy="-40" rx="6" ry="15" fill="none" stroke="#FFFFFF" strokeWidth="1.2"/><line x1="0" y1="-55" x2="0" y2="-70" stroke="#FFFFFF" strokeWidth="1"/><circle cx="0" cy="-72" r="2" fill="#FFFFFF"/></g>
+                    <g transform="rotate(210)"><ellipse cx="0" cy="-40" rx="6" ry="15" fill="none" stroke="#FFFFFF" strokeWidth="1.2"/><line x1="0" y1="-55" x2="0" y2="-70" stroke="#FFFFFF" strokeWidth="1"/><circle cx="0" cy="-72" r="2" fill="#FFFFFF"/></g>
+                    <g transform="rotate(240)"><ellipse cx="0" cy="-40" rx="6" ry="15" fill="none" stroke="#FFFFFF" strokeWidth="1.2"/><line x1="0" y1="-55" x2="0" y2="-70" stroke="#FFFFFF" strokeWidth="1"/><circle cx="0" cy="-72" r="2" fill="#FFFFFF"/></g>
+                    <g transform="rotate(270)"><ellipse cx="0" cy="-40" rx="6" ry="15" fill="none" stroke="#FFFFFF" strokeWidth="1.2"/><line x1="0" y1="-55" x2="0" y2="-70" stroke="#FFFFFF" strokeWidth="1"/><circle cx="0" cy="-72" r="2" fill="#FFFFFF"/></g>
+                    <g transform="rotate(300)"><ellipse cx="0" cy="-40" rx="6" ry="15" fill="none" stroke="#FFFFFF" strokeWidth="1.2"/><line x1="0" y1="-55" x2="0" y2="-70" stroke="#FFFFFF" strokeWidth="1"/><circle cx="0" cy="-72" r="2" fill="#FFFFFF"/></g>
+                    <g transform="rotate(330)"><ellipse cx="0" cy="-40" rx="6" ry="15" fill="none" stroke="#FFFFFF" strokeWidth="1.2"/><line x1="0" y1="-55" x2="0" y2="-70" stroke="#FFFFFF" strokeWidth="1"/><circle cx="0" cy="-72" r="2" fill="#FFFFFF"/></g>
+                    
+                    {/* Inner decorative rings */}
+                    <circle cx="0" cy="0" r="35" fill="none" stroke="#FFFFFF" strokeWidth="1" strokeDasharray="4 2"/>
+                    <circle cx="0" cy="0" r="25" fill="none" stroke="#FFFFFF" strokeWidth="1.5"/>
+                    <circle cx="0" cy="0" r="15" fill="none" stroke="#FFFFFF" strokeWidth="1"/>
+                    <circle cx="0" cy="0" r="5" fill="#FFFFFF"/>
+                    
+                    {/* 8 radiating spokes */}
+                    <line x1="0" y1="0" x2="35" y2="0" stroke="#FFFFFF" strokeWidth="0.5" opacity="0.5"/>
+                    <line x1="0" y1="0" x2="24.7" y2="24.7" stroke="#FFFFFF" strokeWidth="0.5" opacity="0.5"/>
+                    <line x1="0" y1="0" x2="0" y2="35" stroke="#FFFFFF" strokeWidth="0.5" opacity="0.5"/>
+                    <line x1="0" y1="0" x2="-24.7" y2="24.7" stroke="#FFFFFF" strokeWidth="0.5" opacity="0.5"/>
+                    <line x1="0" y1="0" x2="-35" y2="0" stroke="#FFFFFF" strokeWidth="0.5" opacity="0.5"/>
+                    <line x1="0" y1="0" x2="-24.7" y2="-24.7" stroke="#FFFFFF" strokeWidth="0.5" opacity="0.5"/>
+                    <line x1="0" y1="0" x2="0" y2="-35" stroke="#FFFFFF" strokeWidth="0.5" opacity="0.5"/>
+                    <line x1="0" y1="0" x2="24.7" y2="-24.7" stroke="#FFFFFF" strokeWidth="0.5" opacity="0.5"/>
+                  </g>
+                  
+                  {/* Corner tribal knots */}
+                  <g fill="none" stroke="#FFFFFF" strokeWidth="1">
+                    {/* Top-left */}
+                    <path d="M5 5 Q20 5 20 20 Q20 35 5 35 Q5 20 5 5"/>
+                    <circle cx="12" cy="20" r="3"/>
+                    
+                    {/* Top-right */}
+                    <path d="M175 5 Q160 5 160 20 Q160 35 175 35 Q175 20 175 5"/>
+                    <circle cx="168" cy="20" r="3"/>
+                    
+                    {/* Bottom-left */}
+                    <path d="M5 175 Q20 175 20 160 Q20 145 5 145 Q5 160 5 175"/>
+                    <circle cx="12" cy="160" r="3"/>
+                    
+                    {/* Bottom-right */}
+                    <path d="M175 175 Q160 175 160 160 Q160 145 175 145 Q175 160 175 175"/>
+                    <circle cx="168" cy="160" r="3"/>
+                  </g>
+                  
+                  {/* Edge decorative lines */}
+                  <line x1="40" y1="0" x2="140" y2="0" stroke="#FFFFFF" strokeWidth="1" opacity="0.3"/>
+                  <line x1="40" y1="180" x2="140" y2="180" stroke="#FFFFFF" strokeWidth="1" opacity="0.3"/>
+                  <line x1="0" y1="40" x2="0" y2="140" stroke="#FFFFFF" strokeWidth="1" opacity="0.3"/>
+                  <line x1="180" y1="40" x2="180" y2="140" stroke="#FFFFFF" strokeWidth="1" opacity="0.3"/>
+                </pattern>
+              </defs>
+              <rect width="100%" height="100%" fill="url(#whiteTribalPattern)"/>
+            </svg>
+          </div>
+          
+          {/* Secondary floating elements */}
+          <div className="tribal-pattern-float-slow absolute inset-0 opacity-[0.03]">
+            <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 400" preserveAspectRatio="xMidYMid slice">
+              <defs>
+                <pattern id="whiteFloatingDots" x="0" y="0" width="100" height="100" patternUnits="userSpaceOnUse">
+                  <circle cx="50" cy="50" r="2" fill="#FFFFFF"/>
+                  <circle cx="25" cy="25" r="1.5" fill="#FFFFFF"/>
+                  <circle cx="75" cy="25" r="1.5" fill="#FFFFFF"/>
+                  <circle cx="25" cy="75" r="1.5" fill="#FFFFFF"/>
+                  <circle cx="75" cy="75" r="1.5" fill="#FFFFFF"/>
+                  <circle cx="50" cy="10" r="1" fill="#FFFFFF"/>
+                  <circle cx="50" cy="90" r="1" fill="#FFFFFF"/>
+                  <circle cx="10" cy="50" r="1" fill="#FFFFFF"/>
+                  <circle cx="90" cy="50" r="1" fill="#FFFFFF"/>
+                </pattern>
+              </defs>
+              <rect width="100%" height="100%" fill="url(#whiteFloatingDots)"/>
+            </svg>
+          </div>
+        </div>
+        
+        {/* Gold ambient glow */}
+        <div className="absolute inset-0 opacity-10 pointer-events-none">
           <div className="absolute top-0 left-1/4 w-96 h-96 bg-brass-gold rounded-full blur-3xl"></div>
           <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-brass-gold rounded-full blur-3xl"></div>
         </div>
+        
+        {/* Vignette overlay for depth */}
+        <div className="absolute inset-0 bg-gradient-radial from-transparent via-charcoal/30 to-charcoal/60 pointer-events-none z-[1]"></div>
         
         <div className="container-elegant relative z-10">
           <div className="max-w-3xl mx-auto text-center">
