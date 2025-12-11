@@ -3,184 +3,87 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { useState, useEffect, useCallback } from 'react'
-import { ArrowRight, ArrowLeft, Star, ShoppingCart, Heart, Quote, ChevronLeft, ChevronRight, Calendar, Clock, User } from 'lucide-react'
+import { ArrowRight, ArrowLeft, Star, ShoppingCart, Heart, Quote, ChevronLeft, ChevronRight, Calendar, Clock, User, Hammer, Truck, Award } from 'lucide-react'
 import { useCart } from '@/store/cartStore'
 
-// Hero slider images from /public folder
-const heroSlides = [
+// Fallback data for initial render or when API fails
+const fallbackSlides = [
   {
-    id: 1,
+    id: '1',
     image: '/slide0.webp',
     title: 'Ancient Artistry',
     subtitle: 'From the Heart of Odisha',
     description: 'Discover handcrafted brass and copper treasures, each piece telling a story of centuries-old tradition.',
   },
-  {
-    id: 2,
-    image: '/slide1.webp',
-    title: 'Timeless Elegance',
-    subtitle: 'Handcrafted with Love',
-    description: 'Experience the warmth of traditional Indian craftsmanship in every detail.',
-  },
-  {
-    id: 3,
-    image: '/slide2.webp',
-    title: 'Sacred Traditions',
-    subtitle: 'For Your Pooja Space',
-    description: 'Elevate your spiritual practice with authentic ritual items crafted by master artisans.',
-  },
-  {
-    id: 4,
-    image: '/slide3.webp',
-    title: 'Home Decor',
-    subtitle: 'Artisan Collections',
-    description: 'Transform your living spaces with pieces that blend tradition with contemporary aesthetics.',
-  },
 ]
 
-// Mock product data with local images
-const featuredProducts = [
-  {
-    id: '1',
-    name: 'Traditional Brass Diya Set',
-    price: 1299,
-    originalPrice: 1999,
-    image: '/slide0.webp',
-    rating: 4.5,
-    reviews: 128,
-    badge: 'Best Seller',
-  },
-  {
-    id: '2',
-    name: 'Copper Water Pot (Tamra Lota)',
-    price: 2499,
-    originalPrice: 3499,
-    image: '/slide1.webp',
-    rating: 4.8,
-    reviews: 89,
-    badge: 'New',
-  },
-  {
-    id: '3',
-    name: 'Brass Pooja Thali Set',
-    price: 1899,
-    originalPrice: 2599,
-    image: '/slide2.webp',
-    rating: 4.6,
-    reviews: 156,
-    badge: 'Popular',
-  },
-  {
-    id: '4',
-    name: 'Handcrafted Brass Urli',
-    price: 3499,
-    originalPrice: 4999,
-    image: '/slide3.webp',
-    rating: 4.7,
-    reviews: 203,
-    badge: 'Featured',
-  },
-  {
-    id: '5',
-    name: 'Copper Kalash with Stand',
-    price: 4299,
-    originalPrice: 5999,
-    image: '/slide4.webp',
-    rating: 4.9,
-    reviews: 67,
-    badge: 'Premium',
-  },
-  {
-    id: '6',
-    name: 'Brass Ganesha Idol',
-    price: 1599,
-    originalPrice: 2299,
-    image: '/slide5.webp',
-    rating: 4.5,
-    reviews: 312,
-    badge: 'Best Seller',
-  },
+const fallbackCategories = [
+  { id: '1', name: 'Brass Utensils', image: '/slide4.webp', slug: 'brass-utensils' },
+  { id: '2', name: 'Copper Cookware', image: '/slide5.webp', slug: 'copper-cookware' },
+  { id: '3', name: 'Pooja Items', image: '/slide6.webp', slug: 'pooja-items' },
+  { id: '4', name: 'Home Decor', image: '/slide7.webp', slug: 'home-decor' },
 ]
 
-// Testimonials data
-const testimonials = [
-  {
-    id: 1,
-    name: 'Priya Sharma',
-    location: 'Mumbai, Maharashtra',
-    initials: 'PS',
-    rating: 5,
-    text: 'The brass diya set I purchased is absolutely stunning! The craftsmanship is impeccable, and it arrived beautifully packaged. It has become the centerpiece of my pooja room.',
-    product: 'Brass Diya Set',
-  },
-  {
-    id: 2,
-    name: 'Rajesh Patel',
-    location: 'Ahmedabad, Gujarat',
-    initials: 'RP',
-    rating: 5,
-    text: 'I have been searching for authentic Odisha brass work for years. BodhOm exceeded my expectations. The quality is museum-worthy, and the customer service was exceptional.',
-    product: 'Copper Water Pot',
-  },
-  {
-    id: 3,
-    name: 'Anita Krishnan',
-    location: 'Chennai, Tamil Nadu',
-    initials: 'AK',
-    rating: 5,
-    text: 'Every piece I have bought tells a story. You can feel the heritage and dedication of the artisans. The brass urli is now a conversation starter at every gathering.',
-    product: 'Brass Urli',
-  },
-]
+// Types for API data
+interface HeroSlide {
+  id: string
+  image: string
+  title: string
+  subtitle: string
+  description: string
+  button_text?: string
+  button_link?: string
+}
 
-// Blog posts data with local images
-const blogPosts = [
-  {
-    id: 1,
-    title: 'The Art of Dhokra: An Ancient Lost-Wax Technique',
-    excerpt: 'Discover the 4,000-year-old metal casting tradition that continues to thrive in Odisha villages, creating intricate tribal art pieces.',
-    image: '/slide6.webp',
-    category: 'Craftsmanship',
-    author: 'Shantanu Goswami',
-    date: 'Nov 28, 2025',
-    readTime: '5 min read',
-  },
-  {
-    id: 2,
-    title: 'Brass vs Copper: Understanding Traditional Metals',
-    excerpt: 'Learn about the unique properties, health benefits, and spiritual significance of brass and copper in Indian culture.',
-    image: '/slide7.webp',
-    category: 'Knowledge',
-    author: 'Shantanu Goswami',
-    date: 'Nov 22, 2025',
-    readTime: '7 min read',
-  },
-  {
-    id: 3,
-    title: 'Setting Up Your Perfect Pooja Room',
-    excerpt: 'Expert tips on creating a sacred space that honors tradition while fitting modern home aesthetics.',
-    image: '/slide8.webp',
-    category: 'Lifestyle',
-    author: 'Shantanu Goswami',
-    date: 'Nov 15, 2025',
-    readTime: '6 min read',
-  },
-]
+interface Product {
+  id: string
+  name: string
+  price: number
+  original_price?: number
+  thumbnail?: string
+  images?: string[]
+  rating?: number
+  reviews_count?: number
+  badge?: string
+  slug?: string
+}
 
-// Categories with local images
-const categories = [
-  { name: 'Brass Utensils', image: '/slide4.webp', count: 45 },
-  { name: 'Copper Cookware', image: '/slide5.webp', count: 32 },
-  { name: 'Pooja Items', image: '/slide6.webp', count: 67 },
-  { name: 'Home Decor', image: '/slide7.webp', count: 28 },
-]
+interface Category {
+  id: string
+  name: string
+  slug: string
+  image?: string
+}
+
+interface Testimonial {
+  id: string
+  name: string
+  location: string
+  initials: string
+  rating: number
+  text: string
+  product: string
+}
+
+interface BlogPost {
+  id: string
+  title: string
+  slug: string
+  excerpt: string
+  featured_image?: string
+  category: string
+  author: string
+  published_at?: string
+  read_time: string
+}
 
 // Product Card Component
-function ProductCard({ product, index }: { product: typeof featuredProducts[0], index: number }) {
+function ProductCard({ product, index }: { product: Product, index: number }) {
   const { addItem } = useCart()
   const [isWishlisted, setIsWishlisted] = useState(false)
-  const discount = product.originalPrice
-    ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)
+  const productImage = product.thumbnail || product.images?.[0] || '/slide0.webp'
+  const discount = product.original_price
+    ? Math.round(((product.original_price - product.price) / product.original_price) * 100)
     : 0
 
   const handleAddToCart = (e: React.MouseEvent) => {
@@ -190,7 +93,7 @@ function ProductCard({ product, index }: { product: typeof featuredProducts[0], 
       id: product.id,
       name: product.name,
       price: product.price,
-      image: product.image,
+      image: productImage,
     })
   }
 
@@ -220,7 +123,7 @@ function ProductCard({ product, index }: { product: typeof featuredProducts[0], 
           </button>
           <div className="relative w-full h-full">
             <Image
-              src={product.image}
+              src={productImage}
               alt={product.name}
               fill
               className="object-cover transition-transform duration-700 group-hover:scale-110"
@@ -242,7 +145,7 @@ function ProductCard({ product, index }: { product: typeof featuredProducts[0], 
                 <Star
                   key={i}
                   className={`w-4 h-4 ${
-                    i < Math.floor(product.rating)
+                    i < Math.floor(product.rating || 0)
                       ? 'fill-brass-gold text-brass-gold'
                       : 'text-cream-400'
                   }`}
@@ -250,7 +153,7 @@ function ProductCard({ product, index }: { product: typeof featuredProducts[0], 
               ))}
             </div>
             <span className="text-sm text-charcoal-400">
-              {product.rating} ({product.reviews})
+              {product.rating || 0} ({product.reviews_count || 0})
             </span>
           </div>
 
@@ -259,9 +162,9 @@ function ProductCard({ product, index }: { product: typeof featuredProducts[0], 
             <span className="text-2xl font-bold text-charcoal">
               ₹{product.price.toLocaleString()}
             </span>
-            {product.originalPrice && (
+            {product.original_price && (
               <span className="text-sm text-charcoal-400 line-through">
-                ₹{product.originalPrice.toLocaleString()}
+                ₹{product.original_price.toLocaleString()}
               </span>
             )}
           </div>
@@ -284,14 +187,68 @@ export default function HomePage() {
   const [currentSlide, setCurrentSlide] = useState(0)
   const [productSlideIndex, setProductSlideIndex] = useState(0)
   const [slidesPerView, setSlidesPerView] = useState(3)
+  
+  // Dynamic data from API
+  const [heroSlides, setHeroSlides] = useState<HeroSlide[]>(fallbackSlides as HeroSlide[])
+  const [featuredProducts, setFeaturedProducts] = useState<Product[]>([])
+  const [categories, setCategories] = useState<Category[]>(fallbackCategories)
+  const [testimonials, setTestimonials] = useState<Testimonial[]>([])
+  const [blogPosts, setBlogPosts] = useState<BlogPost[]>([])
+  const [loading, setLoading] = useState(true)
+
+  // Fetch all data from APIs
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [slidesRes, productsRes, categoriesRes, testimonialsRes, blogRes] = await Promise.all([
+          fetch('/api/slides'),
+          fetch('/api/products?featured=true&limit=6'),
+          fetch('/api/categories'),
+          fetch('/api/testimonials'),
+          fetch('/api/blog?limit=3'),
+        ])
+
+        const [slidesData, productsData, categoriesData, testimonialsData, blogData] = await Promise.all([
+          slidesRes.json(),
+          productsRes.json(),
+          categoriesRes.json(),
+          testimonialsRes.json(),
+          blogRes.json(),
+        ])
+
+        if (slidesData.slides?.length > 0) {
+          setHeroSlides(slidesData.slides)
+        }
+        if (productsData.products?.length > 0) {
+          setFeaturedProducts(productsData.products)
+        }
+        if (categoriesData.categories?.length > 0) {
+          setCategories(categoriesData.categories)
+        }
+        if (testimonialsData.testimonials?.length > 0) {
+          setTestimonials(testimonialsData.testimonials)
+        }
+        if (blogData.posts?.length > 0) {
+          setBlogPosts(blogData.posts)
+        }
+      } catch (error) {
+        console.error('Error fetching homepage data:', error)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchData()
+  }, [])
 
   // Auto-advance hero slider
   useEffect(() => {
+    if (heroSlides.length === 0) return
     const timer = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % heroSlides.length)
     }, 6000)
     return () => clearInterval(timer)
-  }, [])
+  }, [heroSlides.length])
 
   // Handle responsive slides per view
   useEffect(() => {
@@ -462,21 +419,104 @@ export default function HomePage() {
         <div className="container-elegant relative z-10">
           <div className="text-center mb-14">
             <p className="text-brass-gold font-medium tracking-widest uppercase mb-3 animate-fade-in">Curated Collections</p>
+            {/* Decorative Pattern Above Title */}
+            <div className="flex justify-center mb-4">
+              <svg width="320" height="24" viewBox="0 0 320 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-brass-gold">
+                {/* Left Spiral */}
+                <path d="M20 12 Q25 6 30 12 Q35 18 40 12" stroke="currentColor" strokeWidth="1.5" fill="none"/>
+                <circle cx="15" cy="12" r="3" fill="currentColor"/>
+                {/* Left Floral Rosette */}
+                <g transform="translate(60, 12)">
+                  <circle cx="0" cy="0" r="6" fill="none" stroke="currentColor" strokeWidth="1"/>
+                  <circle cx="0" cy="-4" r="2" fill="currentColor"/>
+                  <circle cx="4" cy="0" r="2" fill="currentColor"/>
+                  <circle cx="0" cy="4" r="2" fill="currentColor"/>
+                  <circle cx="-4" cy="0" r="2" fill="currentColor"/>
+                  <circle cx="0" cy="0" r="1.5" fill="currentColor"/>
+                </g>
+                {/* Left Decorative Leaves */}
+                <path d="M80 12 L95 8 L90 12 L95 16 Z" fill="currentColor"/>
+                <path d="M100 12 L115 8 L110 12 L115 16 Z" fill="currentColor"/>
+                {/* Center Large Floral */}
+                <g transform="translate(160, 12)">
+                  <circle cx="0" cy="0" r="8" fill="none" stroke="currentColor" strokeWidth="1.5"/>
+                  <circle cx="0" cy="-5" r="2.5" fill="currentColor"/>
+                  <circle cx="5" cy="0" r="2.5" fill="currentColor"/>
+                  <circle cx="0" cy="5" r="2.5" fill="currentColor"/>
+                  <circle cx="-5" cy="0" r="2.5" fill="currentColor"/>
+                  <circle cx="3.5" cy="-3.5" r="1.5" fill="currentColor"/>
+                  <circle cx="3.5" cy="3.5" r="1.5" fill="currentColor"/>
+                  <circle cx="-3.5" cy="3.5" r="1.5" fill="currentColor"/>
+                  <circle cx="-3.5" cy="-3.5" r="1.5" fill="currentColor"/>
+                  <circle cx="0" cy="0" r="2" fill="currentColor"/>
+                </g>
+                {/* Right Decorative Leaves */}
+                <path d="M240 12 L225 8 L230 12 L225 16 Z" fill="currentColor"/>
+                <path d="M220 12 L205 8 L210 12 L205 16 Z" fill="currentColor"/>
+                {/* Right Floral Rosette */}
+                <g transform="translate(260, 12)">
+                  <circle cx="0" cy="0" r="6" fill="none" stroke="currentColor" strokeWidth="1"/>
+                  <circle cx="0" cy="-4" r="2" fill="currentColor"/>
+                  <circle cx="4" cy="0" r="2" fill="currentColor"/>
+                  <circle cx="0" cy="4" r="2" fill="currentColor"/>
+                  <circle cx="-4" cy="0" r="2" fill="currentColor"/>
+                  <circle cx="0" cy="0" r="1.5" fill="currentColor"/>
+                </g>
+                {/* Right Spiral */}
+                <path d="M300 12 Q295 6 290 12 Q285 18 280 12" stroke="currentColor" strokeWidth="1.5" fill="none"/>
+                <circle cx="305" cy="12" r="3" fill="currentColor"/>
+              </svg>
+            </div>
             <h2 className="text-4xl md:text-5xl font-serif font-bold text-charcoal mb-4">
               Shop by Category
             </h2>
-            <div className="section-divider mt-6"></div>
+            {/* Decorative Pattern Below Title */}
+            <div className="flex justify-center mt-4">
+              <svg width="320" height="24" viewBox="0 0 320 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-brass-gold">
+                {/* Left Spiral */}
+                <path d="M20 12 Q25 18 30 12 Q35 6 40 12" stroke="currentColor" strokeWidth="1.5" fill="none"/>
+                <circle cx="15" cy="12" r="3" fill="currentColor"/>
+                {/* Left Small Flowers */}
+                <g transform="translate(55, 12)">
+                  <circle cx="0" cy="0" r="4" fill="none" stroke="currentColor" strokeWidth="1"/>
+                  <circle cx="0" cy="0" r="1.5" fill="currentColor"/>
+                </g>
+                {/* Left Horizontal Line with Dots */}
+                <line x1="70" y1="12" x2="140" y2="12" stroke="currentColor" strokeWidth="1"/>
+                <circle cx="85" cy="12" r="2" fill="currentColor"/>
+                <circle cx="105" cy="12" r="2" fill="currentColor"/>
+                <circle cx="125" cy="12" r="2" fill="currentColor"/>
+                {/* Center Diamond Motif */}
+                <g transform="translate(160, 12)">
+                  <path d="M0 -8 L8 0 L0 8 L-8 0 Z" fill="none" stroke="currentColor" strokeWidth="1.5"/>
+                  <path d="M0 -4 L4 0 L0 4 L-4 0 Z" fill="currentColor"/>
+                </g>
+                {/* Right Horizontal Line with Dots */}
+                <line x1="180" y1="12" x2="250" y2="12" stroke="currentColor" strokeWidth="1"/>
+                <circle cx="195" cy="12" r="2" fill="currentColor"/>
+                <circle cx="215" cy="12" r="2" fill="currentColor"/>
+                <circle cx="235" cy="12" r="2" fill="currentColor"/>
+                {/* Right Small Flowers */}
+                <g transform="translate(265, 12)">
+                  <circle cx="0" cy="0" r="4" fill="none" stroke="currentColor" strokeWidth="1"/>
+                  <circle cx="0" cy="0" r="1.5" fill="currentColor"/>
+                </g>
+                {/* Right Spiral */}
+                <path d="M300 12 Q295 18 290 12 Q285 6 280 12" stroke="currentColor" strokeWidth="1.5" fill="none"/>
+                <circle cx="305" cy="12" r="3" fill="currentColor"/>
+              </svg>
+            </div>
           </div>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 relative z-10">
             {categories.map((category, index) => (
               <Link
-                key={index}
-                href={`/collections/${category.name.toLowerCase().replace(/\s+/g, '-')}`}
+                key={category.id || index}
+                href={`/collections/${category.slug || category.name.toLowerCase().replace(/\s+/g, '-')}`}
                 className="group relative overflow-hidden rounded-2xl shadow-soft hover:shadow-soft-lg transition-all duration-500 aspect-square"
                 style={{ animationDelay: `${index * 0.1}s` }}
               >
                 <Image
-                  src={category.image}
+                  src={category.image || `/slide${index + 4}.webp`}
                   alt={category.name}
                   fill
                   className="object-cover transition-transform duration-700 group-hover:scale-110"
@@ -486,7 +526,6 @@ export default function HomePage() {
                   <h3 className="text-xl font-serif font-semibold mb-1 group-hover:text-brass-gold transition-colors">
                     {category.name}
                   </h3>
-                  <p className="text-cream-300 text-sm">{category.count} items</p>
                 </div>
                 <div className="absolute top-4 right-4 w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 transform group-hover:translate-x-0 translate-x-4">
                   <ArrowRight className="w-5 h-5 text-white" />
@@ -720,16 +759,99 @@ export default function HomePage() {
         <div className="container-elegant relative z-10">
           <div className="text-center mb-14">
             <p className="text-brass-gold font-medium tracking-widest uppercase mb-3">Our Promise</p>
+            {/* Decorative Pattern Above Title */}
+            <div className="flex justify-center mb-4">
+              <svg width="320" height="24" viewBox="0 0 320 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-brass-gold">
+                {/* Left Spiral */}
+                <path d="M20 12 Q25 6 30 12 Q35 18 40 12" stroke="currentColor" strokeWidth="1.5" fill="none"/>
+                <circle cx="15" cy="12" r="3" fill="currentColor"/>
+                {/* Left Floral Rosette */}
+                <g transform="translate(60, 12)">
+                  <circle cx="0" cy="0" r="6" fill="none" stroke="currentColor" strokeWidth="1"/>
+                  <circle cx="0" cy="-4" r="2" fill="currentColor"/>
+                  <circle cx="4" cy="0" r="2" fill="currentColor"/>
+                  <circle cx="0" cy="4" r="2" fill="currentColor"/>
+                  <circle cx="-4" cy="0" r="2" fill="currentColor"/>
+                  <circle cx="0" cy="0" r="1.5" fill="currentColor"/>
+                </g>
+                {/* Left Decorative Leaves */}
+                <path d="M80 12 L95 8 L90 12 L95 16 Z" fill="currentColor"/>
+                <path d="M100 12 L115 8 L110 12 L115 16 Z" fill="currentColor"/>
+                {/* Center Large Floral */}
+                <g transform="translate(160, 12)">
+                  <circle cx="0" cy="0" r="8" fill="none" stroke="currentColor" strokeWidth="1.5"/>
+                  <circle cx="0" cy="-5" r="2.5" fill="currentColor"/>
+                  <circle cx="5" cy="0" r="2.5" fill="currentColor"/>
+                  <circle cx="0" cy="5" r="2.5" fill="currentColor"/>
+                  <circle cx="-5" cy="0" r="2.5" fill="currentColor"/>
+                  <circle cx="3.5" cy="-3.5" r="1.5" fill="currentColor"/>
+                  <circle cx="3.5" cy="3.5" r="1.5" fill="currentColor"/>
+                  <circle cx="-3.5" cy="3.5" r="1.5" fill="currentColor"/>
+                  <circle cx="-3.5" cy="-3.5" r="1.5" fill="currentColor"/>
+                  <circle cx="0" cy="0" r="2" fill="currentColor"/>
+                </g>
+                {/* Right Decorative Leaves */}
+                <path d="M240 12 L225 8 L230 12 L225 16 Z" fill="currentColor"/>
+                <path d="M220 12 L205 8 L210 12 L205 16 Z" fill="currentColor"/>
+                {/* Right Floral Rosette */}
+                <g transform="translate(260, 12)">
+                  <circle cx="0" cy="0" r="6" fill="none" stroke="currentColor" strokeWidth="1"/>
+                  <circle cx="0" cy="-4" r="2" fill="currentColor"/>
+                  <circle cx="4" cy="0" r="2" fill="currentColor"/>
+                  <circle cx="0" cy="4" r="2" fill="currentColor"/>
+                  <circle cx="-4" cy="0" r="2" fill="currentColor"/>
+                  <circle cx="0" cy="0" r="1.5" fill="currentColor"/>
+                </g>
+                {/* Right Spiral */}
+                <path d="M300 12 Q295 6 290 12 Q285 18 280 12" stroke="currentColor" strokeWidth="1.5" fill="none"/>
+                <circle cx="305" cy="12" r="3" fill="currentColor"/>
+              </svg>
+            </div>
             <h2 className="text-4xl md:text-5xl font-serif font-bold text-charcoal mb-4">
               Why Choose BodhOm
             </h2>
-            <div className="section-divider mt-6"></div>
+            {/* Decorative Pattern Below Title */}
+            <div className="flex justify-center mt-4">
+              <svg width="320" height="24" viewBox="0 0 320 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-brass-gold">
+                {/* Left Spiral */}
+                <path d="M20 12 Q25 18 30 12 Q35 6 40 12" stroke="currentColor" strokeWidth="1.5" fill="none"/>
+                <circle cx="15" cy="12" r="3" fill="currentColor"/>
+                {/* Left Small Flowers */}
+                <g transform="translate(55, 12)">
+                  <circle cx="0" cy="0" r="4" fill="none" stroke="currentColor" strokeWidth="1"/>
+                  <circle cx="0" cy="0" r="1.5" fill="currentColor"/>
+                </g>
+                {/* Left Horizontal Line with Dots */}
+                <line x1="70" y1="12" x2="140" y2="12" stroke="currentColor" strokeWidth="1"/>
+                <circle cx="85" cy="12" r="2" fill="currentColor"/>
+                <circle cx="105" cy="12" r="2" fill="currentColor"/>
+                <circle cx="125" cy="12" r="2" fill="currentColor"/>
+                {/* Center Diamond Motif */}
+                <g transform="translate(160, 12)">
+                  <path d="M0 -8 L8 0 L0 8 L-8 0 Z" fill="none" stroke="currentColor" strokeWidth="1.5"/>
+                  <path d="M0 -4 L4 0 L0 4 L-4 0 Z" fill="currentColor"/>
+                </g>
+                {/* Right Horizontal Line with Dots */}
+                <line x1="180" y1="12" x2="250" y2="12" stroke="currentColor" strokeWidth="1"/>
+                <circle cx="195" cy="12" r="2" fill="currentColor"/>
+                <circle cx="215" cy="12" r="2" fill="currentColor"/>
+                <circle cx="235" cy="12" r="2" fill="currentColor"/>
+                {/* Right Small Flowers */}
+                <g transform="translate(265, 12)">
+                  <circle cx="0" cy="0" r="4" fill="none" stroke="currentColor" strokeWidth="1"/>
+                  <circle cx="0" cy="0" r="1.5" fill="currentColor"/>
+                </g>
+                {/* Right Spiral */}
+                <path d="M300 12 Q295 18 290 12 Q285 6 280 12" stroke="currentColor" strokeWidth="1.5" fill="none"/>
+                <circle cx="305" cy="12" r="3" fill="currentColor"/>
+              </svg>
+            </div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative z-10">
             {[
-              { icon: '✨', title: 'Authentic Craftsmanship', desc: 'Each piece is handcrafted by skilled artisans from Odisha, preserving traditional techniques passed down through generations.' },
-              { icon: '🚚', title: 'Free Shipping', desc: 'Enjoy complimentary shipping on orders above ₹999 across India. Fast, secure, and carefully packaged delivery.' },
-              { icon: '💎', title: 'Premium Quality', desc: 'Quality-checked products with 7-day return policy. Your complete satisfaction is our utmost priority.' },
+              { icon: <Hammer className="w-10 h-10 text-charcoal" />, title: 'Authentic Craftsmanship', desc: 'Each piece is handcrafted by skilled artisans from Odisha, preserving traditional techniques passed down through generations.' },
+              { icon: <Truck className="w-10 h-10 text-charcoal" />, title: 'Free Shipping', desc: 'Enjoy complimentary shipping on orders above ₹999 across India. Fast, secure, and carefully packaged delivery.' },
+              { icon: <Award className="w-10 h-10 text-charcoal" />, title: 'Premium Quality', desc: 'Quality-checked products with 7-day return policy. Your complete satisfaction is our utmost priority.' },
             ].map((item, index) => (
               <div 
                 key={index}
@@ -737,7 +859,7 @@ export default function HomePage() {
                 style={{ animationDelay: `${index * 0.15}s` }}
               >
                 <div className="w-20 h-20 bg-cream-200 rounded-full flex items-center justify-center mx-auto mb-6">
-                  <span className="text-4xl">{item.icon}</span>
+                  {item.icon}
                 </div>
                 <h3 className="text-2xl font-serif font-semibold text-charcoal mb-3">{item.title}</h3>
                 <p className="text-charcoal-400 leading-relaxed">{item.desc}</p>
@@ -818,10 +940,93 @@ export default function HomePage() {
         <div className="container-elegant relative z-10">
           <div className="text-center mb-14">
             <p className="text-brass-gold font-medium tracking-widest uppercase mb-3">What Our Customers Say</p>
+            {/* Decorative Pattern Above Title */}
+            <div className="flex justify-center mb-4">
+              <svg width="320" height="24" viewBox="0 0 320 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-brass-gold">
+                {/* Left Spiral */}
+                <path d="M20 12 Q25 6 30 12 Q35 18 40 12" stroke="currentColor" strokeWidth="1.5" fill="none"/>
+                <circle cx="15" cy="12" r="3" fill="currentColor"/>
+                {/* Left Floral Rosette */}
+                <g transform="translate(60, 12)">
+                  <circle cx="0" cy="0" r="6" fill="none" stroke="currentColor" strokeWidth="1"/>
+                  <circle cx="0" cy="-4" r="2" fill="currentColor"/>
+                  <circle cx="4" cy="0" r="2" fill="currentColor"/>
+                  <circle cx="0" cy="4" r="2" fill="currentColor"/>
+                  <circle cx="-4" cy="0" r="2" fill="currentColor"/>
+                  <circle cx="0" cy="0" r="1.5" fill="currentColor"/>
+                </g>
+                {/* Left Decorative Leaves */}
+                <path d="M80 12 L95 8 L90 12 L95 16 Z" fill="currentColor"/>
+                <path d="M100 12 L115 8 L110 12 L115 16 Z" fill="currentColor"/>
+                {/* Center Large Floral */}
+                <g transform="translate(160, 12)">
+                  <circle cx="0" cy="0" r="8" fill="none" stroke="currentColor" strokeWidth="1.5"/>
+                  <circle cx="0" cy="-5" r="2.5" fill="currentColor"/>
+                  <circle cx="5" cy="0" r="2.5" fill="currentColor"/>
+                  <circle cx="0" cy="5" r="2.5" fill="currentColor"/>
+                  <circle cx="-5" cy="0" r="2.5" fill="currentColor"/>
+                  <circle cx="3.5" cy="-3.5" r="1.5" fill="currentColor"/>
+                  <circle cx="3.5" cy="3.5" r="1.5" fill="currentColor"/>
+                  <circle cx="-3.5" cy="3.5" r="1.5" fill="currentColor"/>
+                  <circle cx="-3.5" cy="-3.5" r="1.5" fill="currentColor"/>
+                  <circle cx="0" cy="0" r="2" fill="currentColor"/>
+                </g>
+                {/* Right Decorative Leaves */}
+                <path d="M240 12 L225 8 L230 12 L225 16 Z" fill="currentColor"/>
+                <path d="M220 12 L205 8 L210 12 L205 16 Z" fill="currentColor"/>
+                {/* Right Floral Rosette */}
+                <g transform="translate(260, 12)">
+                  <circle cx="0" cy="0" r="6" fill="none" stroke="currentColor" strokeWidth="1"/>
+                  <circle cx="0" cy="-4" r="2" fill="currentColor"/>
+                  <circle cx="4" cy="0" r="2" fill="currentColor"/>
+                  <circle cx="0" cy="4" r="2" fill="currentColor"/>
+                  <circle cx="-4" cy="0" r="2" fill="currentColor"/>
+                  <circle cx="0" cy="0" r="1.5" fill="currentColor"/>
+                </g>
+                {/* Right Spiral */}
+                <path d="M300 12 Q295 6 290 12 Q285 18 280 12" stroke="currentColor" strokeWidth="1.5" fill="none"/>
+                <circle cx="305" cy="12" r="3" fill="currentColor"/>
+              </svg>
+            </div>
             <h2 className="text-4xl md:text-5xl font-serif font-bold text-charcoal mb-4">
               Testimonials
             </h2>
-            <div className="section-divider mt-6"></div>
+            {/* Decorative Pattern Below Title */}
+            <div className="flex justify-center mt-4">
+              <svg width="320" height="24" viewBox="0 0 320 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-brass-gold">
+                {/* Left Spiral */}
+                <path d="M20 12 Q25 18 30 12 Q35 6 40 12" stroke="currentColor" strokeWidth="1.5" fill="none"/>
+                <circle cx="15" cy="12" r="3" fill="currentColor"/>
+                {/* Left Small Flowers */}
+                <g transform="translate(55, 12)">
+                  <circle cx="0" cy="0" r="4" fill="none" stroke="currentColor" strokeWidth="1"/>
+                  <circle cx="0" cy="0" r="1.5" fill="currentColor"/>
+                </g>
+                {/* Left Horizontal Line with Dots */}
+                <line x1="70" y1="12" x2="140" y2="12" stroke="currentColor" strokeWidth="1"/>
+                <circle cx="85" cy="12" r="2" fill="currentColor"/>
+                <circle cx="105" cy="12" r="2" fill="currentColor"/>
+                <circle cx="125" cy="12" r="2" fill="currentColor"/>
+                {/* Center Diamond Motif */}
+                <g transform="translate(160, 12)">
+                  <path d="M0 -8 L8 0 L0 8 L-8 0 Z" fill="none" stroke="currentColor" strokeWidth="1.5"/>
+                  <path d="M0 -4 L4 0 L0 4 L-4 0 Z" fill="currentColor"/>
+                </g>
+                {/* Right Horizontal Line with Dots */}
+                <line x1="180" y1="12" x2="250" y2="12" stroke="currentColor" strokeWidth="1"/>
+                <circle cx="195" cy="12" r="2" fill="currentColor"/>
+                <circle cx="215" cy="12" r="2" fill="currentColor"/>
+                <circle cx="235" cy="12" r="2" fill="currentColor"/>
+                {/* Right Small Flowers */}
+                <g transform="translate(265, 12)">
+                  <circle cx="0" cy="0" r="4" fill="none" stroke="currentColor" strokeWidth="1"/>
+                  <circle cx="0" cy="0" r="1.5" fill="currentColor"/>
+                </g>
+                {/* Right Spiral */}
+                <path d="M300 12 Q295 18 290 12 Q285 6 280 12" stroke="currentColor" strokeWidth="1.5" fill="none"/>
+                <circle cx="305" cy="12" r="3" fill="currentColor"/>
+              </svg>
+            </div>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative z-10">
@@ -885,83 +1090,89 @@ export default function HomePage() {
             </Link>
           </div>
           
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {/* Featured Blog Post */}
-            <div className="lg:col-span-2 blog-card rounded-2xl overflow-hidden bg-white shadow-soft hover:shadow-soft-lg">
-              <Link href={`/blog/${blogPosts[0].id}`}>
-                <div className="relative h-80 lg:h-96 overflow-hidden">
-                  <Image
-                    src={blogPosts[0].image}
-                    alt={blogPosts[0].title}
-                    fill
-                    className="object-cover blog-image"
-                  />
-                  <div className="absolute top-4 left-4 bg-brass-gold text-white px-4 py-1 rounded-full text-sm font-medium">
-                    {blogPosts[0].category}
-                  </div>
-                </div>
-                <div className="p-8">
-                  <div className="flex items-center gap-4 text-charcoal-400 text-sm mb-4">
-                    <span className="flex items-center gap-1">
-                      <Calendar className="w-4 h-4" />
-                      {blogPosts[0].date}
-                    </span>
-                    <span className="flex items-center gap-1">
-                      <Clock className="w-4 h-4" />
-                      {blogPosts[0].readTime}
-                    </span>
-                  </div>
-                  <h3 className="text-2xl font-serif font-bold text-charcoal mb-3 hover:text-brass-gold transition-colors">
-                    {blogPosts[0].title}
-                  </h3>
-                  <p className="text-charcoal-400 leading-relaxed mb-4">
-                    {blogPosts[0].excerpt}
-                  </p>
-                  <div className="flex items-center gap-2 text-brass-gold font-medium">
-                    Read More <ArrowRight className="w-4 h-4" />
-                  </div>
-                </div>
-              </Link>
-            </div>
-            
-            {/* Secondary Blog Posts */}
-            <div className="flex flex-col gap-8">
-              {blogPosts.slice(1).map((post) => (
-                <Link 
-                  key={post.id}
-                  href={`/blog/${post.id}`}
-                  className="blog-card rounded-2xl overflow-hidden bg-white shadow-soft hover:shadow-soft-lg"
-                >
-                  <div className="relative h-48 overflow-hidden">
+          {blogPosts.length > 0 ? (
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+              {/* Featured Blog Post */}
+              <div className="lg:col-span-2 blog-card rounded-2xl overflow-hidden bg-white shadow-soft hover:shadow-soft-lg">
+                <Link href={`/blog/${blogPosts[0].slug || blogPosts[0].id}`}>
+                  <div className="relative h-80 lg:h-96 overflow-hidden">
                     <Image
-                      src={post.image}
-                      alt={post.title}
+                      src={blogPosts[0].featured_image || '/slide6.webp'}
+                      alt={blogPosts[0].title}
                       fill
                       className="object-cover blog-image"
                     />
-                    <div className="absolute top-4 left-4 bg-brass-gold text-white px-3 py-1 rounded-full text-xs font-medium">
-                      {post.category}
+                    <div className="absolute top-4 left-4 bg-brass-gold text-white px-4 py-1 rounded-full text-sm font-medium">
+                      {blogPosts[0].category}
                     </div>
                   </div>
-                  <div className="p-6">
-                    <div className="flex items-center gap-3 text-charcoal-400 text-xs mb-3">
+                  <div className="p-8">
+                    <div className="flex items-center gap-4 text-charcoal-400 text-sm mb-4">
                       <span className="flex items-center gap-1">
-                        <Calendar className="w-3 h-3" />
-                        {post.date}
+                        <Calendar className="w-4 h-4" />
+                        {blogPosts[0].published_at ? new Date(blogPosts[0].published_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'Draft'}
                       </span>
                       <span className="flex items-center gap-1">
-                        <Clock className="w-3 h-3" />
-                        {post.readTime}
+                        <Clock className="w-4 h-4" />
+                        {blogPosts[0].read_time || '5 min read'}
                       </span>
                     </div>
-                    <h3 className="text-lg font-serif font-bold text-charcoal hover:text-brass-gold transition-colors line-clamp-2">
-                      {post.title}
+                    <h3 className="text-2xl font-serif font-bold text-charcoal mb-3 hover:text-brass-gold transition-colors">
+                      {blogPosts[0].title}
                     </h3>
+                    <p className="text-charcoal-400 leading-relaxed mb-4">
+                      {blogPosts[0].excerpt}
+                    </p>
+                    <div className="flex items-center gap-2 text-brass-gold font-medium">
+                      Read More <ArrowRight className="w-4 h-4" />
+                    </div>
                   </div>
                 </Link>
-              ))}
+              </div>
+
+              {/* Secondary Blog Posts */}
+              <div className="flex flex-col gap-8">
+                {blogPosts.slice(1).map((post) => (
+                  <Link
+                    key={post.id}
+                    href={`/blog/${post.slug || post.id}`}
+                    className="blog-card rounded-2xl overflow-hidden bg-white shadow-soft hover:shadow-soft-lg"
+                  >
+                    <div className="relative h-48 overflow-hidden">
+                      <Image
+                        src={post.featured_image || '/slide7.webp'}
+                        alt={post.title}
+                        fill
+                        className="object-cover blog-image"
+                      />
+                      <div className="absolute top-4 left-4 bg-brass-gold text-white px-3 py-1 rounded-full text-xs font-medium">
+                        {post.category}
+                      </div>
+                    </div>
+                    <div className="p-6">
+                      <div className="flex items-center gap-3 text-charcoal-400 text-xs mb-3">
+                        <span className="flex items-center gap-1">
+                          <Calendar className="w-3 h-3" />
+                          {post.published_at ? new Date(post.published_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'Draft'}
+                        </span>
+                        <span className="flex items-center gap-1">
+                          <Clock className="w-3 h-3" />
+                          {post.read_time || '5 min read'}
+                        </span>
+                      </div>
+                      <h3 className="text-lg font-serif font-bold text-charcoal hover:text-brass-gold transition-colors line-clamp-2">
+                        {post.title}
+                      </h3>
+                    </div>
+                  </Link>
+                ))}
+              </div>
             </div>
-          </div>
+          ) : (
+            <div className="text-center py-12">
+              <p className="text-charcoal-400">No blog posts available yet.</p>
+            </div>
+          )}
 
           <div className="text-center mt-10">
             <Link

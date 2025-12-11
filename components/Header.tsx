@@ -5,9 +5,26 @@ import { useState, useEffect } from 'react'
 import { ShoppingCart, User, Menu, X, Search } from 'lucide-react'
 import { useCart } from '@/store/cartStore'
 
+interface MenuItem {
+  id: string
+  title: string
+  url: string
+  open_in_new_tab?: boolean
+}
+
+// Default menu items as fallback
+const defaultMenuItems = [
+  { id: '1', title: 'Home', url: '/' },
+  { id: '2', title: 'Products', url: '/products' },
+  { id: '3', title: 'Collections', url: '/collections' },
+  { id: '4', title: 'About', url: '/about' },
+  { id: '5', title: 'Contact', url: '/contact' },
+]
+
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isScrolled, setIsScrolled] = useState(false)
+  const [menuItems, setMenuItems] = useState<MenuItem[]>(defaultMenuItems)
   const { items } = useCart()
   const cartItemCount = items.reduce((sum, item) => sum + item.quantity, 0)
 
@@ -17,6 +34,22 @@ export default function Header() {
     }
     window.addEventListener('scroll', handleScroll)
     return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
+
+  // Fetch menu items from API
+  useEffect(() => {
+    const fetchMenuItems = async () => {
+      try {
+        const res = await fetch('/api/menu-items?location=header')
+        const data = await res.json()
+        if (data.menuItems?.length > 0) {
+          setMenuItems(data.menuItems)
+        }
+      } catch (error) {
+        console.error('Error fetching menu items:', error)
+      }
+    }
+    fetchMenuItems()
   }, [])
 
   return (
@@ -54,23 +87,19 @@ export default function Header() {
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-8">
-            {[
-              { name: 'Home', href: '/' },
-              { name: 'Products', href: '/products' },
-              { name: 'Collections', href: '/collections' },
-              { name: 'About', href: '/about' },
-              { name: 'Contact', href: '/contact' },
-            ].map((link) => (
+            {menuItems.map((link) => (
               <Link 
-                key={link.name}
-                href={link.href} 
+                key={link.id}
+                href={link.url}
+                target={link.open_in_new_tab ? '_blank' : undefined}
+                rel={link.open_in_new_tab ? 'noopener noreferrer' : undefined}
                 className={`font-medium transition-colors duration-300 animated-underline ${
                   isScrolled 
                     ? 'text-charcoal-500 hover:text-brass-gold' 
                     : 'text-white/90 hover:text-white'
                 }`}
               >
-                {link.name}
+                {link.title}
               </Link>
             ))}
           </nav>
@@ -136,16 +165,12 @@ export default function Header() {
         }`}>
           <nav className={`py-4 border-t ${isScrolled ? 'border-cream-200' : 'border-white/20'}`}>
             <div className="flex flex-col space-y-1">
-              {[
-                { name: 'Home', href: '/' },
-                { name: 'Products', href: '/products' },
-                { name: 'Collections', href: '/collections' },
-                { name: 'About', href: '/about' },
-                { name: 'Contact', href: '/contact' },
-              ].map((link) => (
+              {menuItems.map((link) => (
                 <Link
-                  key={link.name}
-                  href={link.href}
+                  key={link.id}
+                  href={link.url}
+                  target={link.open_in_new_tab ? '_blank' : undefined}
+                  rel={link.open_in_new_tab ? 'noopener noreferrer' : undefined}
                   className={`py-3 px-4 rounded-lg font-medium transition-colors ${
                     isScrolled 
                       ? 'text-charcoal-500 hover:text-brass-gold hover:bg-cream-100' 
@@ -153,7 +178,7 @@ export default function Header() {
                   }`}
                   onClick={() => setIsMenuOpen(false)}
                 >
-                  {link.name}
+                  {link.title}
                 </Link>
               ))}
               <Link

@@ -1,6 +1,9 @@
 import { createClient } from './client'
 
-export type StorageBucket = 'products' | 'slides' | 'blogs' | 'assets'
+// Using single "bodhom" bucket with folder structure
+export const STORAGE_BUCKET = 'bodhom'
+
+export type StorageFolder = 'products' | 'slides' | 'blogs' | 'assets' | 'pages' | 'categories'
 
 export interface UploadResult {
   url: string
@@ -9,9 +12,9 @@ export interface UploadResult {
 }
 
 export async function uploadFile(
-  bucket: StorageBucket,
+  folder: StorageFolder,
   file: File,
-  folder?: string
+  subfolder?: string
 ): Promise<UploadResult> {
   const supabase = createClient()
   
@@ -20,10 +23,10 @@ export async function uploadFile(
   const randomString = Math.random().toString(36).substring(2, 8)
   const extension = file.name.split('.').pop()
   const filename = `${timestamp}-${randomString}.${extension}`
-  const path = folder ? `${folder}/${filename}` : filename
+  const path = subfolder ? `${folder}/${subfolder}/${filename}` : `${folder}/${filename}`
 
   const { data, error } = await supabase.storage
-    .from(bucket)
+    .from(STORAGE_BUCKET)
     .upload(path, file, {
       cacheControl: '3600',
       upsert: false,
@@ -34,31 +37,30 @@ export async function uploadFile(
   }
 
   const { data: urlData } = supabase.storage
-    .from(bucket)
+    .from(STORAGE_BUCKET)
     .getPublicUrl(data.path)
 
   return { url: urlData.publicUrl, path: data.path }
 }
 
 export async function uploadMultipleFiles(
-  bucket: StorageBucket,
+  folder: StorageFolder,
   files: File[],
-  folder?: string
+  subfolder?: string
 ): Promise<UploadResult[]> {
   const results = await Promise.all(
-    files.map((file) => uploadFile(bucket, file, folder))
+    files.map((file) => uploadFile(folder, file, subfolder))
   )
   return results
 }
 
 export async function deleteFile(
-  bucket: StorageBucket,
   path: string
 ): Promise<{ success: boolean; error?: string }> {
   const supabase = createClient()
   
   const { error } = await supabase.storage
-    .from(bucket)
+    .from(STORAGE_BUCKET)
     .remove([path])
 
   if (error) {
@@ -69,13 +71,12 @@ export async function deleteFile(
 }
 
 export async function deleteMultipleFiles(
-  bucket: StorageBucket,
   paths: string[]
 ): Promise<{ success: boolean; error?: string }> {
   const supabase = createClient()
   
   const { error } = await supabase.storage
-    .from(bucket)
+    .from(STORAGE_BUCKET)
     .remove(paths)
 
   if (error) {
@@ -85,20 +86,19 @@ export async function deleteMultipleFiles(
   return { success: true }
 }
 
-export function getPublicUrl(bucket: StorageBucket, path: string): string {
+export function getPublicUrl(path: string): string {
   const supabase = createClient()
-  const { data } = supabase.storage.from(bucket).getPublicUrl(path)
+  const { data } = supabase.storage.from(STORAGE_BUCKET).getPublicUrl(path)
   return data.publicUrl
 }
 
 export async function listFiles(
-  bucket: StorageBucket,
   folder?: string
 ): Promise<{ files: any[]; error?: string }> {
   const supabase = createClient()
   
   const { data, error } = await supabase.storage
-    .from(bucket)
+    .from(STORAGE_BUCKET)
     .list(folder || '', {
       limit: 100,
       sortBy: { column: 'created_at', order: 'desc' },

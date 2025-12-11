@@ -1,9 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase/server'
 
-type StorageBucket = 'products' | 'slides' | 'blogs' | 'assets'
+// Using single "bodhom" bucket with folder structure
+const STORAGE_BUCKET = 'bodhom'
 
-const ALLOWED_BUCKETS: StorageBucket[] = ['products', 'slides', 'blogs', 'assets']
+type StorageFolder = 'products' | 'slides' | 'blogs' | 'assets' | 'pages' | 'categories'
+
+const ALLOWED_FOLDERS: StorageFolder[] = ['products', 'slides', 'blogs', 'assets', 'pages', 'categories']
 const MAX_FILE_SIZE = 10 * 1024 * 1024 // 10MB
 const ALLOWED_MIME_TYPES = [
   'image/jpeg',
@@ -17,18 +20,18 @@ export async function POST(request: NextRequest) {
   try {
     const formData = await request.formData()
     const file = formData.get('file') as File | null
-    const bucket = formData.get('bucket') as StorageBucket
-    const folder = formData.get('folder') as string | null
+    const folder = formData.get('bucket') as StorageFolder // Keep 'bucket' param name for backwards compatibility
+    const subfolder = formData.get('folder') as string | null
 
     // Validate file
     if (!file) {
       return NextResponse.json({ error: 'No file provided' }, { status: 400 })
     }
 
-    // Validate bucket
-    if (!bucket || !ALLOWED_BUCKETS.includes(bucket)) {
+    // Validate folder (backwards compatible - accepts 'bucket' param)
+    if (!folder || !ALLOWED_FOLDERS.includes(folder)) {
       return NextResponse.json(
-        { error: 'Invalid bucket. Allowed: products, slides, blogs, assets' },
+        { error: 'Invalid folder. Allowed: products, slides, blogs, assets, pages, categories' },
         { status: 400 }
       )
     }
@@ -56,15 +59,16 @@ export async function POST(request: NextRequest) {
     const randomString = Math.random().toString(36).substring(2, 8)
     const extension = file.name.split('.').pop()
     const filename = `${timestamp}-${randomString}.${extension}`
-    const path = folder ? `${folder}/${filename}` : filename
+    // Use folder structure: bodhom/products/filename.jpg or bodhom/products/subfolder/filename.jpg
+    const path = subfolder ? `${folder}/${subfolder}/${filename}` : `${folder}/${filename}`
 
     // Convert file to buffer
     const arrayBuffer = await file.arrayBuffer()
     const buffer = Buffer.from(arrayBuffer)
 
-    // Upload to Supabase Storage
+    // Upload to Supabase Storage (single "bodhom" bucket)
     const { data, error } = await supabase.storage
-      .from(bucket)
+      .from(STORAGE_BUCKET)
       .upload(path, buffer, {
         contentType: file.type,
         cacheControl: '3600',
@@ -78,13 +82,14 @@ export async function POST(request: NextRequest) {
 
     // Get public URL
     const { data: urlData } = supabase.storage
-      .from(bucket)
+      .from(STORAGE_BUCKET)
       .getPublicUrl(data.path)
 
     return NextResponse.json({
       url: urlData.publicUrl,
       path: data.path,
-      bucket,
+      bucket: STORAGE_BUCKET,
+      folder,
     })
   } catch (error) {
     console.error('Upload error:', error)
@@ -96,22 +101,18 @@ export async function POST(request: NextRequest) {
 export async function DELETE(request: NextRequest) {
   try {
     const body = await request.json()
-    const { bucket, path } = body
+    const { path } = body
 
-    if (!bucket || !path) {
+    if (!path) {
       return NextResponse.json(
-        { error: 'bucket and path are required' },
+        { error: 'path is required' },
         { status: 400 }
       )
     }
 
-    if (!ALLOWED_BUCKETS.includes(bucket)) {
-      return NextResponse.json({ error: 'Invalid bucket' }, { status: 400 })
-    }
-
     const supabase = createAdminClient()
 
-    const { error } = await supabase.storage.from(bucket).remove([path])
+    const { error } = await supabase.storage.from(STORAGE_BUCKET).remove([path])
 
     if (error) {
       return NextResponse.json({ error: error.message }, { status: 500 })
@@ -123,4 +124,3 @@ export async function DELETE(request: NextRequest) {
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }
-

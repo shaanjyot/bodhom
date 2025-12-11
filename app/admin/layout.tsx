@@ -30,6 +30,8 @@ const navItems = [
   { href: '/admin/categories', label: 'Categories', icon: FolderTree },
   { href: '/admin/slides', label: 'Hero Slides', icon: Image },
   { href: '/admin/blog', label: 'Blog Posts', icon: FileText },
+  { href: '/admin/pages', label: 'Pages', icon: FileText },
+  { href: '/admin/menu', label: 'Menu Items', icon: Menu },
   { href: '/admin/testimonials', label: 'Testimonials', icon: MessageSquare },
   { href: '/admin/content', label: 'Page Content', icon: Settings },
   { href: '/admin/subscribers', label: 'Subscribers', icon: Users },
