@@ -346,17 +346,17 @@ export default function HomePage() {
           ))}
         </div>
 
-        {/* Arrow Navigation */}
+        {/* Arrow Navigation - Hidden on mobile to prevent text overlap */}
         <button
           onClick={() => setCurrentSlide((prev) => (prev - 1 + heroSlides.length) % heroSlides.length)}
-          className="slider-arrow absolute left-4 top-1/2 transform -translate-y-1/2 z-20 hidden md:flex"
+          className="slider-arrow absolute left-4 top-1/2 transform -translate-y-1/2 z-20 hidden md:flex md:items-center md:justify-center"
           aria-label="Previous slide"
         >
           <ChevronLeft className="w-6 h-6 text-charcoal" />
         </button>
         <button
           onClick={() => setCurrentSlide((prev) => (prev + 1) % heroSlides.length)}
-          className="slider-arrow absolute right-4 top-1/2 transform -translate-y-1/2 z-20 hidden md:flex"
+          className="slider-arrow absolute right-4 top-1/2 transform -translate-y-1/2 z-20 hidden md:flex md:items-center md:justify-center"
           aria-label="Next slide"
         >
           <ChevronRight className="w-6 h-6 text-charcoal" />

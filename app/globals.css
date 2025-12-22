@@ -471,6 +471,13 @@ a, button {
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
 
+/* Hide slider arrows on mobile to prevent text overlap */
+@media (max-width: 767px) {
+  .slider-arrow {
+    display: none !important;
+  }
+}
+
 .slider-arrow:hover {
   background: #C9A227;
   color: white;

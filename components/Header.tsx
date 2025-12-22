@@ -163,7 +163,11 @@ export default function Header() {
         <div className={`md:hidden overflow-hidden transition-all duration-300 ${
           isMenuOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
         }`}>
-          <nav className={`py-4 border-t ${isScrolled ? 'border-cream-200' : 'border-white/20'}`}>
+          <nav className={`py-4 border-t ${
+            isScrolled 
+              ? 'border-cream-200 bg-white/95 backdrop-blur-md' 
+              : 'border-white/20 bg-charcoal/95 backdrop-blur-md'
+          }`}>
             <div className="flex flex-col space-y-1">
               {menuItems.map((link) => (
                 <Link
