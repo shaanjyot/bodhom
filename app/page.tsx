@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { useState, useEffect, useCallback } from 'react'
-import { ArrowRight, ArrowLeft, Star, ShoppingCart, Heart, Quote, ChevronLeft, ChevronRight, Calendar, Clock, User, Hammer, Truck, Award } from 'lucide-react'
+import { ArrowRight, ArrowLeft, Star, Heart, Quote, ChevronLeft, ChevronRight, Calendar, Clock, User, Hammer, Truck, Award } from 'lucide-react'
 import { useCart } from '@/store/cartStore'
 
 // Fallback data for initial render or when API fails
@@ -81,7 +81,7 @@ interface BlogPost {
 function ProductCard({ product, index }: { product: Product, index: number }) {
   const { addItem } = useCart()
   const [isWishlisted, setIsWishlisted] = useState(false)
-  const productImage = product.thumbnail || product.images?.[0] || '/slide0.webp'
+  const productImage = (product.thumbnail && product.thumbnail.trim()) || (product.images && product.images.length > 0 && product.images[0]?.trim()) || '/slide0.webp'
   const discount = product.original_price
     ? Math.round(((product.original_price - product.price) / product.original_price) * 100)
     : 0
@@ -133,8 +133,8 @@ function ProductCard({ product, index }: { product: Product, index: number }) {
         </div>
 
         {/* Product Info */}
-        <div className="p-5">
-          <h3 className="font-serif text-lg font-semibold text-charcoal mb-2 group-hover:text-brass-gold transition-colors line-clamp-2">
+        <div className="p-4 md:p-5">
+          <h3 className="font-serif text-base md:text-lg font-semibold text-charcoal mb-2 group-hover:text-brass-gold transition-colors line-clamp-2 min-h-[3rem] md:min-h-[3.5rem]">
             {product.name}
           </h3>
 
@@ -144,7 +144,7 @@ function ProductCard({ product, index }: { product: Product, index: number }) {
               {[...Array(5)].map((_, i) => (
                 <Star
                   key={i}
-                  className={`w-4 h-4 ${
+                  className={`w-3.5 h-3.5 md:w-4 md:h-4 ${
                     i < Math.floor(product.rating || 0)
                       ? 'fill-brass-gold text-brass-gold'
                       : 'text-cream-400'
@@ -152,30 +152,21 @@ function ProductCard({ product, index }: { product: Product, index: number }) {
                 />
               ))}
             </div>
-            <span className="text-sm text-charcoal-400">
+            <span className="text-xs md:text-sm text-charcoal-400">
               {product.rating || 0} ({product.reviews_count || 0})
             </span>
           </div>
 
-          {/* Price */}
-          <div className="flex items-baseline gap-2 mb-4">
-            <span className="text-2xl font-bold text-charcoal">
-              ₹{product.price.toLocaleString()}
-            </span>
-            {product.original_price && (
-              <span className="text-sm text-charcoal-400 line-through">
-                ₹{product.original_price.toLocaleString()}
-              </span>
-            )}
-          </div>
-
-          {/* Add to Cart Button */}
+          {/* View Details Button */}
           <button
-            onClick={handleAddToCart}
-            className="w-full btn-gold text-white py-3 px-4 rounded-xl font-semibold flex items-center justify-center gap-2"
+            onClick={(e) => {
+              e.preventDefault()
+              window.location.href = `/products/${product.id}`
+            }}
+            className="w-full btn-gold text-white py-2.5 px-4 rounded-lg font-semibold flex items-center justify-center gap-2 transition-all duration-300 hover:gap-3 group/btn"
           >
-            <ShoppingCart className="w-5 h-5" />
-            Add to Cart
+            <span>View Details</span>
+            <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover/btn:translate-x-1" />
           </button>
         </div>
       </div>
@@ -250,11 +241,11 @@ export default function HomePage() {
     return () => clearInterval(timer)
   }, [heroSlides.length])
 
-  // Handle responsive slides per view
+  // Handle responsive slides per view - more items on mobile
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth < 640) {
-        setSlidesPerView(1)
+        setSlidesPerView(2.2) // Show 2.2 items on mobile for scrolling effect
       } else if (window.innerWidth < 1024) {
         setSlidesPerView(2)
       } else {
@@ -267,6 +258,21 @@ export default function HomePage() {
   }, [])
 
   const maxProductSlide = Math.max(0, featuredProducts.length - slidesPerView)
+  
+  // Auto-scroll product slider
+  useEffect(() => {
+    const currentMaxSlide = Math.max(0, featuredProducts.length - slidesPerView)
+    if (featuredProducts.length === 0 || currentMaxSlide <= 0) return
+    const timer = setInterval(() => {
+      setProductSlideIndex((prev) => {
+        if (prev >= currentMaxSlide) {
+          return 0 // Reset to start
+        }
+        return prev + 1
+      })
+    }, 4000) // Auto-scroll every 4 seconds
+    return () => clearInterval(timer)
+  }, [featuredProducts.length, slidesPerView])
 
   const nextProductSlide = useCallback(() => {
     setProductSlideIndex((prev) => Math.min(prev + 1, maxProductSlide))
@@ -413,122 +419,261 @@ export default function HomePage() {
           </div>
         </div>
         
-        {/* Gradient overlays for depth */}
-        <div className="absolute inset-0 bg-gradient-to-b from-cream-100 via-transparent to-cream-100 pointer-events-none z-[1]"></div>
-        
-        <div className="container-elegant relative z-10">
-          <div className="text-center mb-14">
-            <p className="text-brass-gold font-medium tracking-widest uppercase mb-3 animate-fade-in">Curated Collections</p>
-            {/* Decorative Pattern Above Title */}
-            <div className="flex justify-center mb-4">
-              <svg width="320" height="24" viewBox="0 0 320 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-brass-gold">
-                {/* Left Spiral */}
-                <path d="M20 12 Q25 6 30 12 Q35 18 40 12" stroke="currentColor" strokeWidth="1.5" fill="none"/>
-                <circle cx="15" cy="12" r="3" fill="currentColor"/>
-                {/* Left Floral Rosette */}
-                <g transform="translate(60, 12)">
-                  <circle cx="0" cy="0" r="6" fill="none" stroke="currentColor" strokeWidth="1"/>
-                  <circle cx="0" cy="-4" r="2" fill="currentColor"/>
-                  <circle cx="4" cy="0" r="2" fill="currentColor"/>
-                  <circle cx="0" cy="4" r="2" fill="currentColor"/>
-                  <circle cx="-4" cy="0" r="2" fill="currentColor"/>
-                  <circle cx="0" cy="0" r="1.5" fill="currentColor"/>
-                </g>
-                {/* Left Decorative Leaves */}
-                <path d="M80 12 L95 8 L90 12 L95 16 Z" fill="currentColor"/>
-                <path d="M100 12 L115 8 L110 12 L115 16 Z" fill="currentColor"/>
-                {/* Center Large Floral */}
-                <g transform="translate(160, 12)">
-                  <circle cx="0" cy="0" r="8" fill="none" stroke="currentColor" strokeWidth="1.5"/>
-                  <circle cx="0" cy="-5" r="2.5" fill="currentColor"/>
-                  <circle cx="5" cy="0" r="2.5" fill="currentColor"/>
-                  <circle cx="0" cy="5" r="2.5" fill="currentColor"/>
-                  <circle cx="-5" cy="0" r="2.5" fill="currentColor"/>
-                  <circle cx="3.5" cy="-3.5" r="1.5" fill="currentColor"/>
-                  <circle cx="3.5" cy="3.5" r="1.5" fill="currentColor"/>
-                  <circle cx="-3.5" cy="3.5" r="1.5" fill="currentColor"/>
-                  <circle cx="-3.5" cy="-3.5" r="1.5" fill="currentColor"/>
-                  <circle cx="0" cy="0" r="2" fill="currentColor"/>
-                </g>
-                {/* Right Decorative Leaves */}
-                <path d="M240 12 L225 8 L230 12 L225 16 Z" fill="currentColor"/>
-                <path d="M220 12 L205 8 L210 12 L205 16 Z" fill="currentColor"/>
-                {/* Right Floral Rosette */}
-                <g transform="translate(260, 12)">
-                  <circle cx="0" cy="0" r="6" fill="none" stroke="currentColor" strokeWidth="1"/>
-                  <circle cx="0" cy="-4" r="2" fill="currentColor"/>
-                  <circle cx="4" cy="0" r="2" fill="currentColor"/>
-                  <circle cx="0" cy="4" r="2" fill="currentColor"/>
-                  <circle cx="-4" cy="0" r="2" fill="currentColor"/>
-                  <circle cx="0" cy="0" r="1.5" fill="currentColor"/>
-                </g>
-                {/* Right Spiral */}
-                <path d="M300 12 Q295 6 290 12 Q285 18 280 12" stroke="currentColor" strokeWidth="1.5" fill="none"/>
-                <circle cx="305" cy="12" r="3" fill="currentColor"/>
+        {/* Full-width Sacred Geometry Strap - Outside container for full viewport width */}
+        <div className="w-screen relative mb-14 z-20" style={{ marginLeft: 'calc(-50vw + 50%)' }}>
+          <p className="text-charcoal font-semibold tracking-widest uppercase mb-3 text-center text-lg">Curated Collections</p>
+          {/* Sacred Geometry Pattern Strap */}
+          <div className="relative w-full bg-cream-100 py-6 overflow-hidden">
+            {/* Top Border - Dense Leaf/Vine Motifs */}
+            <div className="absolute top-0 left-0 right-0 h-3 border-b border-brass-gold/30">
+              <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 12" preserveAspectRatio="none">
+                <defs>
+                  <pattern id="topBorderPattern" x="0" y="0" width="30" height="12" patternUnits="userSpaceOnUse">
+                    <path d="M5 6 L8 3 L10 6 L8 9 Z" fill="#C9A227" opacity="0.9"/>
+                    <path d="M15 6 L18 3 L20 6 L18 9 Z" fill="#C9A227" opacity="0.9"/>
+                    <path d="M25 6 L28 3 L30 6 L28 9 Z" fill="#C9A227" opacity="0.9"/>
+                    <circle cx="10" cy="6" r="1.5" fill="#C9A227" opacity="0.7"/>
+                    <circle cx="20" cy="6" r="1.5" fill="#C9A227" opacity="0.7"/>
+                  </pattern>
+                </defs>
+                <rect width="100%" height="100%" fill="url(#topBorderPattern)"/>
               </svg>
             </div>
-            <h2 className="text-4xl md:text-5xl font-serif font-bold text-charcoal mb-4">
+            
+            {/* Main Pattern Band - Dense with Circles, Chakras, and Multi-patterns */}
+            <div className="absolute top-3 left-0 right-0 h-16 z-0">
+              <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 64" preserveAspectRatio="none">
+                <defs>
+                  <pattern id="mainPatternBand" x="0" y="0" width="80" height="64" patternUnits="userSpaceOnUse">
+                    {/* Central Chakra Circle */}
+                    <g transform="translate(40, 32)">
+                      <circle cx="0" cy="0" r="12" fill="none" stroke="#C9A227" strokeWidth="1.8"/>
+                      <circle cx="0" cy="0" r="8" fill="none" stroke="#C9A227" strokeWidth="1.2"/>
+                      <circle cx="0" cy="0" r="4" fill="#C9A227"/>
+                      {/* 8 Petals around chakra */}
+                      <ellipse cx="0" cy="-10" rx="2" ry="6" fill="#C9A227"/>
+                      <ellipse cx="7" cy="-7" rx="2" ry="6" fill="#C9A227" transform="rotate(45)"/>
+                      <ellipse cx="10" cy="0" rx="2" ry="6" fill="#C9A227" transform="rotate(90)"/>
+                      <ellipse cx="7" cy="7" rx="2" ry="6" fill="#C9A227" transform="rotate(135)"/>
+                      <ellipse cx="0" cy="10" rx="2" ry="6" fill="#C9A227" transform="rotate(180)"/>
+                      <ellipse cx="-7" cy="7" rx="2" ry="6" fill="#C9A227" transform="rotate(225)"/>
+                      <ellipse cx="-10" cy="0" rx="2" ry="6" fill="#C9A227" transform="rotate(270)"/>
+                      <ellipse cx="-7" cy="-7" rx="2" ry="6" fill="#C9A227" transform="rotate(315)"/>
+                    </g>
+                    {/* Left Side - Nested Circles */}
+                    <g transform="translate(10, 32)">
+                      <circle cx="0" cy="0" r="6" fill="none" stroke="#C9A227" strokeWidth="1.4"/>
+                      <circle cx="0" cy="0" r="3" fill="none" stroke="#C9A227" strokeWidth="1"/>
+                      <circle cx="0" cy="0" r="1" fill="#C9A227"/>
+                    </g>
+                    {/* Right Side - Nested Circles */}
+                    <g transform="translate(70, 32)">
+                      <circle cx="0" cy="0" r="6" fill="none" stroke="#C9A227" strokeWidth="1.4"/>
+                      <circle cx="0" cy="0" r="3" fill="none" stroke="#C9A227" strokeWidth="1"/>
+                      <circle cx="0" cy="0" r="1" fill="#C9A227"/>
+                    </g>
+                    {/* Top Scroll Motifs */}
+                    <g transform="translate(20, 16)">
+                      <path d="M0 0 Q3 -2 6 0 Q9 2 12 0" stroke="#C9A227" strokeWidth="1.4" fill="none"/>
+                      <circle cx="3" cy="0" r="1" fill="#C9A227"/>
+                      <circle cx="9" cy="0" r="1" fill="#C9A227"/>
+                    </g>
+                    <g transform="translate(48, 16)">
+                      <path d="M0 0 Q3 -2 6 0 Q9 2 12 0" stroke="#C9A227" strokeWidth="1.4" fill="none"/>
+                      <circle cx="3" cy="0" r="1" fill="#C9A227"/>
+                      <circle cx="9" cy="0" r="1" fill="#C9A227"/>
+                    </g>
+                    {/* Bottom Scroll Motifs */}
+                    <g transform="translate(20, 48)">
+                      <path d="M0 0 Q3 2 6 0 Q9 -2 12 0" stroke="#C9A227" strokeWidth="1.4" fill="none"/>
+                      <circle cx="3" cy="0" r="1" fill="#C9A227"/>
+                      <circle cx="9" cy="0" r="1" fill="#C9A227"/>
+                    </g>
+                    <g transform="translate(48, 48)">
+                      <path d="M0 0 Q3 2 6 0 Q9 -2 12 0" stroke="#C9A227" strokeWidth="1.4" fill="none"/>
+                      <circle cx="3" cy="0" r="1" fill="#C9A227"/>
+                      <circle cx="9" cy="0" r="1" fill="#C9A227"/>
+                    </g>
+                    {/* Small decorative circles */}
+                    <circle cx="15" cy="8" r="2" fill="none" stroke="#C9A227" strokeWidth="1"/>
+                    <circle cx="65" cy="8" r="2" fill="none" stroke="#C9A227" strokeWidth="1"/>
+                    <circle cx="15" cy="56" r="2" fill="none" stroke="#C9A227" strokeWidth="1"/>
+                    <circle cx="65" cy="56" r="2" fill="none" stroke="#C9A227" strokeWidth="1"/>
+                  </pattern>
+                </defs>
+                <rect width="100%" height="100%" fill="url(#mainPatternBand)"/>
+              </svg>
+            </div>
+            
+            {/* Title in Center - with solid background above pattern */}
+            <div className="relative z-20 flex items-center justify-center h-16">
+              <div className="bg-cream-100 px-10 py-3 rounded-lg shadow-lg border-2 border-brass-gold/20">
+                <h2 className="text-3xl md:text-4xl lg:text-5xl font-serif font-bold text-charcoal">
               Shop by Category
             </h2>
-            {/* Decorative Pattern Below Title */}
-            <div className="flex justify-center mt-4">
-              <svg width="320" height="24" viewBox="0 0 320 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-brass-gold">
-                {/* Left Spiral */}
-                <path d="M20 12 Q25 18 30 12 Q35 6 40 12" stroke="currentColor" strokeWidth="1.5" fill="none"/>
-                <circle cx="15" cy="12" r="3" fill="currentColor"/>
-                {/* Left Small Flowers */}
-                <g transform="translate(55, 12)">
-                  <circle cx="0" cy="0" r="4" fill="none" stroke="currentColor" strokeWidth="1"/>
-                  <circle cx="0" cy="0" r="1.5" fill="currentColor"/>
-                </g>
-                {/* Left Horizontal Line with Dots */}
-                <line x1="70" y1="12" x2="140" y2="12" stroke="currentColor" strokeWidth="1"/>
-                <circle cx="85" cy="12" r="2" fill="currentColor"/>
-                <circle cx="105" cy="12" r="2" fill="currentColor"/>
-                <circle cx="125" cy="12" r="2" fill="currentColor"/>
-                {/* Center Diamond Motif */}
-                <g transform="translate(160, 12)">
-                  <path d="M0 -8 L8 0 L0 8 L-8 0 Z" fill="none" stroke="currentColor" strokeWidth="1.5"/>
-                  <path d="M0 -4 L4 0 L0 4 L-4 0 Z" fill="currentColor"/>
-                </g>
-                {/* Right Horizontal Line with Dots */}
-                <line x1="180" y1="12" x2="250" y2="12" stroke="currentColor" strokeWidth="1"/>
-                <circle cx="195" cy="12" r="2" fill="currentColor"/>
-                <circle cx="215" cy="12" r="2" fill="currentColor"/>
-                <circle cx="235" cy="12" r="2" fill="currentColor"/>
-                {/* Right Small Flowers */}
-                <g transform="translate(265, 12)">
-                  <circle cx="0" cy="0" r="4" fill="none" stroke="currentColor" strokeWidth="1"/>
-                  <circle cx="0" cy="0" r="1.5" fill="currentColor"/>
-                </g>
-                {/* Right Spiral */}
-                <path d="M300 12 Q295 18 290 12 Q285 6 280 12" stroke="currentColor" strokeWidth="1.5" fill="none"/>
-                <circle cx="305" cy="12" r="3" fill="currentColor"/>
+              </div>
+            </div>
+            
+            {/* Lower Border - Dense Chain-like Diamond Pattern */}
+            <div className="absolute bottom-0 left-0 right-0 h-3 border-t border-brass-gold/30 z-0">
+              <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 12" preserveAspectRatio="none">
+                <defs>
+                  <pattern id="bottomBorderPattern" x="0" y="0" width="25" height="12" patternUnits="userSpaceOnUse">
+                    <path d="M12.5 0 L20 6 L12.5 12 L5 6 Z" fill="none" stroke="#C9A227" strokeWidth="1.2"/>
+                    <line x1="12.5" y1="0" x2="12.5" y2="12" stroke="#C9A227" strokeWidth="1"/>
+                    <line x1="5" y1="6" x2="20" y2="6" stroke="#C9A227" strokeWidth="1"/>
+                    <circle cx="12.5" cy="6" r="1.5" fill="#C9A227" opacity="0.8"/>
+                  </pattern>
+                </defs>
+                <rect width="100%" height="100%" fill="url(#bottomBorderPattern)"/>
               </svg>
             </div>
           </div>
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 relative z-10">
+        </div>
+        
+        <div className="container-elegant relative z-10">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 relative z-10">
             {categories.map((category, index) => (
               <Link
                 key={category.id || index}
                 href={`/collections/${category.slug || category.name.toLowerCase().replace(/\s+/g, '-')}`}
-                className="group relative overflow-hidden rounded-2xl shadow-soft hover:shadow-soft-lg transition-all duration-500 aspect-square"
+                className="group relative overflow-visible aspect-square"
                 style={{ animationDelay: `${index * 0.1}s` }}
               >
+                {/* Decorative Border Frame - Enhanced for Mobile Visibility */}
+                <div className="absolute -inset-1 md:-inset-1.5 z-10 pointer-events-none">
+                  {/* Top Border - Thicker on mobile */}
+                  <div className="absolute top-0 left-0 right-0 h-2.5 md:h-3">
+                    <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 12" preserveAspectRatio="none">
+                      <defs>
+                        <pattern id={`categoryTopBorder${index}`} x="0" y="0" width="25" height="12" patternUnits="userSpaceOnUse">
+                          <path d="M3 6 L7 3 L11 6 L7 9 Z" fill="#C9A227" opacity="1"/>
+                          <path d="M14 6 L18 3 L22 6 L18 9 Z" fill="#C9A227" opacity="1"/>
+                          <circle cx="8" cy="6" r="1.5" fill="#C9A227" opacity="0.9"/>
+                          <circle cx="17" cy="6" r="1.5" fill="#C9A227" opacity="0.9"/>
+                          <line x1="0" y1="6" x2="3" y2="6" stroke="#C9A227" strokeWidth="1" opacity="0.8"/>
+                          <line x1="22" y1="6" x2="25" y2="6" stroke="#C9A227" strokeWidth="1" opacity="0.8"/>
+                        </pattern>
+                      </defs>
+                      <rect width="100%" height="100%" fill={`url(#categoryTopBorder${index})`}/>
+                    </svg>
+                  </div>
+                  
+                  {/* Right Border */}
+                  <div className="absolute top-0 right-0 bottom-0 w-2.5 md:w-3">
+                    <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 200" preserveAspectRatio="none">
+                      <defs>
+                        <pattern id={`categoryRightBorder${index}`} x="0" y="0" width="12" height="25" patternUnits="userSpaceOnUse">
+                          <path d="M6 3 L9 7 L6 11 L3 7 Z" fill="#C9A227" opacity="1"/>
+                          <path d="M6 14 L9 18 L6 22 L3 18 Z" fill="#C9A227" opacity="1"/>
+                          <circle cx="6" cy="8" r="1.5" fill="#C9A227" opacity="0.9"/>
+                          <circle cx="6" cy="17" r="1.5" fill="#C9A227" opacity="0.9"/>
+                          <line x1="6" y1="0" x2="6" y2="3" stroke="#C9A227" strokeWidth="1" opacity="0.8"/>
+                          <line x1="6" y1="22" x2="6" y2="25" stroke="#C9A227" strokeWidth="1" opacity="0.8"/>
+                        </pattern>
+                      </defs>
+                      <rect width="100%" height="100%" fill={`url(#categoryRightBorder${index})`}/>
+                    </svg>
+                  </div>
+                  
+                  {/* Bottom Border */}
+                  <div className="absolute bottom-0 left-0 right-0 h-2.5 md:h-3">
+                    <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 12" preserveAspectRatio="none">
+                      <defs>
+                        <pattern id={`categoryBottomBorder${index}`} x="0" y="0" width="25" height="12" patternUnits="userSpaceOnUse">
+                          <path d="M3 6 L7 9 L11 6 L7 3 Z" fill="#C9A227" opacity="1"/>
+                          <path d="M14 6 L18 9 L22 6 L18 3 Z" fill="#C9A227" opacity="1"/>
+                          <circle cx="8" cy="6" r="1.5" fill="#C9A227" opacity="0.9"/>
+                          <circle cx="17" cy="6" r="1.5" fill="#C9A227" opacity="0.9"/>
+                          <line x1="0" y1="6" x2="3" y2="6" stroke="#C9A227" strokeWidth="1" opacity="0.8"/>
+                          <line x1="22" y1="6" x2="25" y2="6" stroke="#C9A227" strokeWidth="1" opacity="0.8"/>
+                        </pattern>
+                      </defs>
+                      <rect width="100%" height="100%" fill={`url(#categoryBottomBorder${index})`}/>
+                    </svg>
+                  </div>
+                  
+                  {/* Left Border */}
+                  <div className="absolute top-0 left-0 bottom-0 w-2.5 md:w-3">
+                    <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 200" preserveAspectRatio="none">
+                      <defs>
+                        <pattern id={`categoryLeftBorder${index}`} x="0" y="0" width="12" height="25" patternUnits="userSpaceOnUse">
+                          <path d="M6 3 L9 7 L6 11 L3 7 Z" fill="#C9A227" opacity="1"/>
+                          <path d="M6 14 L9 18 L6 22 L3 18 Z" fill="#C9A227" opacity="1"/>
+                          <circle cx="6" cy="8" r="1.5" fill="#C9A227" opacity="0.9"/>
+                          <circle cx="6" cy="17" r="1.5" fill="#C9A227" opacity="0.9"/>
+                          <line x1="6" y1="0" x2="6" y2="3" stroke="#C9A227" strokeWidth="1" opacity="0.8"/>
+                          <line x1="6" y1="22" x2="6" y2="25" stroke="#C9A227" strokeWidth="1" opacity="0.8"/>
+                        </pattern>
+                      </defs>
+                      <rect width="100%" height="100%" fill={`url(#categoryLeftBorder${index})`}/>
+                    </svg>
+                  </div>
+                  
+                  {/* Corner Decorations - Larger and more visible */}
+                  <div className="absolute -top-1 -left-1 w-8 h-8 md:w-10 md:h-10">
+                    <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40">
+                      <circle cx="20" cy="20" r="12" fill="none" stroke="#C9A227" strokeWidth="2" opacity="0.9"/>
+                      <circle cx="20" cy="20" r="6" fill="#C9A227" opacity="0.7"/>
+                      <path d="M20 8 L20 14 M20 26 L20 32 M8 20 L14 20 M26 20 L32 20" stroke="#C9A227" strokeWidth="1.5" opacity="0.8"/>
+                      <circle cx="8" cy="8" r="2" fill="#C9A227" opacity="0.8"/>
+                      <circle cx="32" cy="8" r="2" fill="#C9A227" opacity="0.8"/>
+                      <circle cx="8" cy="32" r="2" fill="#C9A227" opacity="0.8"/>
+                      <circle cx="32" cy="32" r="2" fill="#C9A227" opacity="0.8"/>
+                    </svg>
+                  </div>
+                  <div className="absolute -top-1 -right-1 w-8 h-8 md:w-10 md:h-10">
+                    <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40">
+                      <circle cx="20" cy="20" r="12" fill="none" stroke="#C9A227" strokeWidth="2" opacity="0.9"/>
+                      <circle cx="20" cy="20" r="6" fill="#C9A227" opacity="0.7"/>
+                      <path d="M20 8 L20 14 M20 26 L20 32 M8 20 L14 20 M26 20 L32 20" stroke="#C9A227" strokeWidth="1.5" opacity="0.8"/>
+                      <circle cx="8" cy="8" r="2" fill="#C9A227" opacity="0.8"/>
+                      <circle cx="32" cy="8" r="2" fill="#C9A227" opacity="0.8"/>
+                      <circle cx="8" cy="32" r="2" fill="#C9A227" opacity="0.8"/>
+                      <circle cx="32" cy="32" r="2" fill="#C9A227" opacity="0.8"/>
+                    </svg>
+                  </div>
+                  <div className="absolute -bottom-1 -left-1 w-8 h-8 md:w-10 md:h-10">
+                    <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40">
+                      <circle cx="20" cy="20" r="12" fill="none" stroke="#C9A227" strokeWidth="2" opacity="0.9"/>
+                      <circle cx="20" cy="20" r="6" fill="#C9A227" opacity="0.7"/>
+                      <path d="M20 8 L20 14 M20 26 L20 32 M8 20 L14 20 M26 20 L32 20" stroke="#C9A227" strokeWidth="1.5" opacity="0.8"/>
+                      <circle cx="8" cy="8" r="2" fill="#C9A227" opacity="0.8"/>
+                      <circle cx="32" cy="8" r="2" fill="#C9A227" opacity="0.8"/>
+                      <circle cx="8" cy="32" r="2" fill="#C9A227" opacity="0.8"/>
+                      <circle cx="32" cy="32" r="2" fill="#C9A227" opacity="0.8"/>
+                    </svg>
+                  </div>
+                  <div className="absolute -bottom-1 -right-1 w-8 h-8 md:w-10 md:h-10">
+                    <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40">
+                      <circle cx="20" cy="20" r="12" fill="none" stroke="#C9A227" strokeWidth="2" opacity="0.9"/>
+                      <circle cx="20" cy="20" r="6" fill="#C9A227" opacity="0.7"/>
+                      <path d="M20 8 L20 14 M20 26 L20 32 M8 20 L14 20 M26 20 L32 20" stroke="#C9A227" strokeWidth="1.5" opacity="0.8"/>
+                      <circle cx="8" cy="8" r="2" fill="#C9A227" opacity="0.8"/>
+                      <circle cx="32" cy="8" r="2" fill="#C9A227" opacity="0.8"/>
+                      <circle cx="8" cy="32" r="2" fill="#C9A227" opacity="0.8"/>
+                      <circle cx="32" cy="32" r="2" fill="#C9A227" opacity="0.8"/>
+                    </svg>
+                  </div>
+                </div>
+                
+                {/* Category Card Content */}
+                <div className="relative overflow-hidden rounded-2xl shadow-soft hover:shadow-soft-lg transition-all duration-500 aspect-square border-2 border-brass-gold/30 bg-white">
                 <Image
                   src={category.image || `/slide${index + 4}.webp`}
                   alt={category.name}
                   fill
                   className="object-cover transition-transform duration-700 group-hover:scale-110"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-charcoal/80 via-charcoal/30 to-transparent"></div>
-                <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
-                  <h3 className="text-xl font-serif font-semibold mb-1 group-hover:text-brass-gold transition-colors">
+                  <div className="absolute inset-0 bg-gradient-to-t from-charcoal/85 via-charcoal/40 to-transparent"></div>
+                  <div className="absolute bottom-0 left-0 right-0 p-4 md:p-6 text-white z-10">
+                    <h3 className="text-base md:text-xl font-serif font-semibold mb-1 group-hover:text-brass-gold transition-colors">
                     {category.name}
                   </h3>
                 </div>
-                <div className="absolute top-4 right-4 w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 transform group-hover:translate-x-0 translate-x-4">
-                  <ArrowRight className="w-5 h-5 text-white" />
+                  <div className="absolute top-3 right-3 md:top-4 md:right-4 w-8 h-8 md:w-10 md:h-10 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 transform group-hover:translate-x-0 translate-x-4">
+                    <ArrowRight className="w-4 h-4 md:w-5 md:h-5 text-white" />
+                  </div>
                 </div>
               </Link>
             ))}
@@ -672,9 +817,9 @@ export default function HomePage() {
           </div>
           
           {/* Product Slider */}
-          <div className="overflow-hidden">
+          <div className="overflow-hidden -mx-2 md:-mx-3">
             <div 
-              className="product-slider"
+              className="product-slider px-2 md:px-3"
               style={{ transform: `translateX(-${productSlideIndex * (100 / slidesPerView)}%)` }}
             >
               {featuredProducts.map((product, index) => (
@@ -697,156 +842,194 @@ export default function HomePage() {
 
       {/* Why Choose Us Section */}
       <section className="py-20 bg-sand-DEFAULT relative overflow-hidden">
-        {/* Animated Geometric Tribal Pattern - Diagonal Movement */}
-        <div className="absolute inset-0 opacity-[0.07] pointer-events-none">
-          <div className="tribal-pattern-diagonal absolute" style={{ width: '200%', height: '200%', top: '-50%', left: '-50%' }}>
-            <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600" preserveAspectRatio="none">
+        {/* Animated Circle Sacred Geometry Pattern - Rotating */}
+        <div className="absolute inset-0 pointer-events-none overflow-hidden">
+          <div className="tribal-pattern-rotate absolute opacity-[0.06]">
+            <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" preserveAspectRatio="xMidYMid slice">
               <defs>
-                <pattern id="geometricTribalPattern" x="0" y="0" width="100" height="100" patternUnits="userSpaceOnUse">
-                  {/* Central diamond with tribal fill */}
-                  <path d="M50 10 L90 50 L50 90 L10 50 Z" fill="none" stroke="#7A5C10" strokeWidth="2"/>
-                  <path d="M50 20 L80 50 L50 80 L20 50 Z" fill="none" stroke="#7A5C10" strokeWidth="1.5"/>
-                  <path d="M50 30 L70 50 L50 70 L30 50 Z" fill="none" stroke="#7A5C10" strokeWidth="1"/>
-                  <circle cx="50" cy="50" r="8" fill="none" stroke="#7A5C10" strokeWidth="1.5"/>
-                  <circle cx="50" cy="50" r="3" fill="#7A5C10"/>
-                  
-                  {/* Corner stepped pyramids - Odisha temple style */}
-                  <g fill="#7A5C10">
-                    <rect x="0" y="0" width="15" height="5"/>
-                    <rect x="3" y="5" width="9" height="4"/>
-                    <rect x="5" y="9" width="5" height="3"/>
+                <pattern id="circleSacredGeometry" x="0" y="0" width="200" height="200" patternUnits="userSpaceOnUse">
+                  {/* Large central mandala circle */}
+                  <g transform="translate(100,100)">
+                    {/* Outer ornate ring */}
+                    <circle cx="0" cy="0" r="80" fill="none" stroke="#7A5C10" strokeWidth="1.5" strokeDasharray="10 5"/>
+                    <circle cx="0" cy="0" r="70" fill="none" stroke="#7A5C10" strokeWidth="1.8"/>
+                    <circle cx="0" cy="0" r="60" fill="none" stroke="#7A5C10" strokeWidth="1.2"/>
                     
-                    <rect x="85" y="0" width="15" height="5"/>
-                    <rect x="88" y="5" width="9" height="4"/>
-                    <rect x="90" y="9" width="5" height="3"/>
+                    {/* 16 petals radiating outward */}
+                    {[...Array(16)].map((_, i) => (
+                      <g key={i} transform={`rotate(${i * 22.5})`}>
+                        <ellipse cx="0" cy="-50" rx="4" ry="12" fill="none" stroke="#7A5C10" strokeWidth="1.2"/>
+                        <line x1="0" y1="-62" x2="0" y2="-75" stroke="#7A5C10" strokeWidth="1"/>
+                        <circle cx="0" cy="-78" r="2" fill="#7A5C10"/>
+                      </g>
+                    ))}
                     
-                    <rect x="0" y="95" width="15" height="5"/>
-                    <rect x="3" y="91" width="9" height="4"/>
-                    <rect x="5" y="88" width="5" height="3"/>
+                    {/* Inner decorative rings */}
+                    <circle cx="0" cy="0" r="45" fill="none" stroke="#7A5C10" strokeWidth="1" strokeDasharray="5 3"/>
+                    <circle cx="0" cy="0" r="35" fill="none" stroke="#7A5C10" strokeWidth="1.5"/>
+                    <circle cx="0" cy="0" r="25" fill="none" stroke="#7A5C10" strokeWidth="1"/>
+                    <circle cx="0" cy="0" r="15" fill="none" stroke="#7A5C10" strokeWidth="1.2"/>
+                    <circle cx="0" cy="0" r="5" fill="#7A5C10"/>
                     
-                    <rect x="85" y="95" width="15" height="5"/>
-                    <rect x="88" y="91" width="9" height="4"/>
-                    <rect x="90" y="88" width="5" height="3"/>
+                    {/* 12 radiating spokes */}
+                    {[...Array(12)].map((_, i) => (
+                      <line
+                        key={i}
+                        x1="0"
+                        y1="0"
+                        x2={45 * Math.cos((i * 30) * Math.PI / 180)}
+                        y2={45 * Math.sin((i * 30) * Math.PI / 180)}
+                        stroke="#7A5C10"
+                        strokeWidth="0.6"
+                        opacity="0.6"
+                      />
+                    ))}
                   </g>
                   
-                  {/* Tribal dots arrangement */}
-                  <circle cx="50" cy="5" r="2" fill="#7A5C10"/>
-                  <circle cx="50" cy="95" r="2" fill="#7A5C10"/>
-                  <circle cx="5" cy="50" r="2" fill="#7A5C10"/>
-                  <circle cx="95" cy="50" r="2" fill="#7A5C10"/>
-                  
-                  {/* Connecting tribal lines */}
-                  <line x1="15" y1="15" x2="25" y2="25" stroke="#7A5C10" strokeWidth="1"/>
-                  <line x1="85" y1="15" x2="75" y2="25" stroke="#7A5C10" strokeWidth="1"/>
-                  <line x1="15" y1="85" x2="25" y2="75" stroke="#7A5C10" strokeWidth="1"/>
-                  <line x1="85" y1="85" x2="75" y2="75" stroke="#7A5C10" strokeWidth="1"/>
-                  
-                  {/* Small decorative crescents */}
-                  <path d="M25 50 Q30 45 35 50 Q30 55 25 50" fill="none" stroke="#7A5C10" strokeWidth="1"/>
-                  <path d="M65 50 Q70 45 75 50 Q70 55 65 50" fill="none" stroke="#7A5C10" strokeWidth="1"/>
-                  <path d="M50 25 Q45 30 50 35 Q55 30 50 25" fill="none" stroke="#7A5C10" strokeWidth="1"/>
-                  <path d="M50 65 Q45 70 50 75 Q55 70 50 65" fill="none" stroke="#7A5C10" strokeWidth="1"/>
+                  {/* Corner smaller circles */}
+                  <g transform="translate(30,30)">
+                    <circle cx="0" cy="0" r="15" fill="none" stroke="#7A5C10" strokeWidth="1"/>
+                    <circle cx="0" cy="0" r="8" fill="none" stroke="#7A5C10" strokeWidth="0.8"/>
+                    <circle cx="0" cy="0" r="3" fill="#7A5C10"/>
+                  </g>
+                  <g transform="translate(170,30)">
+                    <circle cx="0" cy="0" r="15" fill="none" stroke="#7A5C10" strokeWidth="1"/>
+                    <circle cx="0" cy="0" r="8" fill="none" stroke="#7A5C10" strokeWidth="0.8"/>
+                    <circle cx="0" cy="0" r="3" fill="#7A5C10"/>
+                  </g>
+                  <g transform="translate(30,170)">
+                    <circle cx="0" cy="0" r="15" fill="none" stroke="#7A5C10" strokeWidth="1"/>
+                    <circle cx="0" cy="0" r="8" fill="none" stroke="#7A5C10" strokeWidth="0.8"/>
+                    <circle cx="0" cy="0" r="3" fill="#7A5C10"/>
+                  </g>
+                  <g transform="translate(170,170)">
+                    <circle cx="0" cy="0" r="15" fill="none" stroke="#7A5C10" strokeWidth="1"/>
+                    <circle cx="0" cy="0" r="8" fill="none" stroke="#7A5C10" strokeWidth="0.8"/>
+                    <circle cx="0" cy="0" r="3" fill="#7A5C10"/>
+                  </g>
                 </pattern>
               </defs>
-              <rect width="100%" height="100%" fill="url(#geometricTribalPattern)"/>
+              <rect width="100%" height="100%" fill="url(#circleSacredGeometry)"/>
             </svg>
           </div>
         </div>
         
-        {/* Radial gradient overlay for depth */}
-        <div className="absolute inset-0 bg-gradient-radial from-transparent via-sand-DEFAULT/50 to-sand-DEFAULT pointer-events-none z-[1]"></div>
+        {/* Radial gradient overlay for depth - darker cream */}
+        <div className="absolute inset-0 bg-gradient-radial from-transparent via-sand-DEFAULT/70 to-sand-DEFAULT pointer-events-none z-[1]"></div>
         
-        <div className="container-elegant relative z-10">
-          <div className="text-center mb-14">
-            <p className="text-brass-gold font-medium tracking-widest uppercase mb-3">Our Promise</p>
-            {/* Decorative Pattern Above Title */}
-            <div className="flex justify-center mb-4">
-              <svg width="320" height="24" viewBox="0 0 320 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-brass-gold">
-                {/* Left Spiral */}
-                <path d="M20 12 Q25 6 30 12 Q35 18 40 12" stroke="currentColor" strokeWidth="1.5" fill="none"/>
-                <circle cx="15" cy="12" r="3" fill="currentColor"/>
-                {/* Left Floral Rosette */}
-                <g transform="translate(60, 12)">
-                  <circle cx="0" cy="0" r="6" fill="none" stroke="currentColor" strokeWidth="1"/>
-                  <circle cx="0" cy="-4" r="2" fill="currentColor"/>
-                  <circle cx="4" cy="0" r="2" fill="currentColor"/>
-                  <circle cx="0" cy="4" r="2" fill="currentColor"/>
-                  <circle cx="-4" cy="0" r="2" fill="currentColor"/>
-                  <circle cx="0" cy="0" r="1.5" fill="currentColor"/>
-                </g>
-                {/* Left Decorative Leaves */}
-                <path d="M80 12 L95 8 L90 12 L95 16 Z" fill="currentColor"/>
-                <path d="M100 12 L115 8 L110 12 L115 16 Z" fill="currentColor"/>
-                {/* Center Large Floral */}
-                <g transform="translate(160, 12)">
-                  <circle cx="0" cy="0" r="8" fill="none" stroke="currentColor" strokeWidth="1.5"/>
-                  <circle cx="0" cy="-5" r="2.5" fill="currentColor"/>
-                  <circle cx="5" cy="0" r="2.5" fill="currentColor"/>
-                  <circle cx="0" cy="5" r="2.5" fill="currentColor"/>
-                  <circle cx="-5" cy="0" r="2.5" fill="currentColor"/>
-                  <circle cx="3.5" cy="-3.5" r="1.5" fill="currentColor"/>
-                  <circle cx="3.5" cy="3.5" r="1.5" fill="currentColor"/>
-                  <circle cx="-3.5" cy="3.5" r="1.5" fill="currentColor"/>
-                  <circle cx="-3.5" cy="-3.5" r="1.5" fill="currentColor"/>
-                  <circle cx="0" cy="0" r="2" fill="currentColor"/>
-                </g>
-                {/* Right Decorative Leaves */}
-                <path d="M240 12 L225 8 L230 12 L225 16 Z" fill="currentColor"/>
-                <path d="M220 12 L205 8 L210 12 L205 16 Z" fill="currentColor"/>
-                {/* Right Floral Rosette */}
-                <g transform="translate(260, 12)">
-                  <circle cx="0" cy="0" r="6" fill="none" stroke="currentColor" strokeWidth="1"/>
-                  <circle cx="0" cy="-4" r="2" fill="currentColor"/>
-                  <circle cx="4" cy="0" r="2" fill="currentColor"/>
-                  <circle cx="0" cy="4" r="2" fill="currentColor"/>
-                  <circle cx="-4" cy="0" r="2" fill="currentColor"/>
-                  <circle cx="0" cy="0" r="1.5" fill="currentColor"/>
-                </g>
-                {/* Right Spiral */}
-                <path d="M300 12 Q295 6 290 12 Q285 18 280 12" stroke="currentColor" strokeWidth="1.5" fill="none"/>
-                <circle cx="305" cy="12" r="3" fill="currentColor"/>
+        {/* Full-width Sacred Geometry Strap - Outside container for full viewport width */}
+        <div className="w-screen relative mb-14" style={{ marginLeft: 'calc(-50vw + 50%)' }}>
+            <p className="text-charcoal font-semibold tracking-widest uppercase mb-3 text-center text-lg">Our Promise</p>
+            {/* Sacred Geometry Pattern Strap */}
+            <div className="relative w-full bg-sand-DEFAULT py-6 overflow-hidden">
+              {/* Top Border - Dense Leaf/Vine Motifs */}
+              <div className="absolute top-0 left-0 right-0 h-3 border-b border-brass-gold/30 z-0">
+                <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 12" preserveAspectRatio="none">
+                  <defs>
+                    <pattern id="topBorderPattern2" x="0" y="0" width="30" height="12" patternUnits="userSpaceOnUse">
+                      <path d="M5 6 L8 3 L10 6 L8 9 Z" fill="#C9A227" opacity="0.9"/>
+                      <path d="M15 6 L18 3 L20 6 L18 9 Z" fill="#C9A227" opacity="0.9"/>
+                      <path d="M25 6 L28 3 L30 6 L28 9 Z" fill="#C9A227" opacity="0.9"/>
+                      <circle cx="10" cy="6" r="1.5" fill="#C9A227" opacity="0.7"/>
+                      <circle cx="20" cy="6" r="1.5" fill="#C9A227" opacity="0.7"/>
+                    </pattern>
+                  </defs>
+                  <rect width="100%" height="100%" fill="url(#topBorderPattern2)"/>
+                </svg>
+              </div>
+              
+              {/* Main Pattern Band - Dense with Circles, Chakras, and Multi-patterns */}
+              <div className="absolute top-3 left-0 right-0 h-16 z-0">
+                <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 64" preserveAspectRatio="none">
+                  <defs>
+                    <pattern id="mainPatternBand2" x="0" y="0" width="80" height="64" patternUnits="userSpaceOnUse">
+                      {/* Central Chakra Circle */}
+                      <g transform="translate(40, 32)">
+                        <circle cx="0" cy="0" r="12" fill="none" stroke="#C9A227" strokeWidth="1.8"/>
+                        <circle cx="0" cy="0" r="8" fill="none" stroke="#C9A227" strokeWidth="1.2"/>
+                        <circle cx="0" cy="0" r="4" fill="#C9A227"/>
+                        {/* 8 Petals around chakra */}
+                        <ellipse cx="0" cy="-10" rx="2" ry="6" fill="#C9A227"/>
+                        <ellipse cx="7" cy="-7" rx="2" ry="6" fill="#C9A227" transform="rotate(45)"/>
+                        <ellipse cx="10" cy="0" rx="2" ry="6" fill="#C9A227" transform="rotate(90)"/>
+                        <ellipse cx="7" cy="7" rx="2" ry="6" fill="#C9A227" transform="rotate(135)"/>
+                        <ellipse cx="0" cy="10" rx="2" ry="6" fill="#C9A227" transform="rotate(180)"/>
+                        <ellipse cx="-7" cy="7" rx="2" ry="6" fill="#C9A227" transform="rotate(225)"/>
+                        <ellipse cx="-10" cy="0" rx="2" ry="6" fill="#C9A227" transform="rotate(270)"/>
+                        <ellipse cx="-7" cy="-7" rx="2" ry="6" fill="#C9A227" transform="rotate(315)"/>
+                      </g>
+                      {/* Left Side - Nested Circles */}
+                      <g transform="translate(10, 32)">
+                        <circle cx="0" cy="0" r="6" fill="none" stroke="#C9A227" strokeWidth="1.4"/>
+                        <circle cx="0" cy="0" r="3" fill="none" stroke="#C9A227" strokeWidth="1"/>
+                        <circle cx="0" cy="0" r="1" fill="#C9A227"/>
+                      </g>
+                      {/* Right Side - Nested Circles */}
+                      <g transform="translate(70, 32)">
+                        <circle cx="0" cy="0" r="6" fill="none" stroke="#C9A227" strokeWidth="1.4"/>
+                        <circle cx="0" cy="0" r="3" fill="none" stroke="#C9A227" strokeWidth="1"/>
+                        <circle cx="0" cy="0" r="1" fill="#C9A227"/>
+                      </g>
+                      {/* Top Scroll Motifs */}
+                      <g transform="translate(20, 16)">
+                        <path d="M0 0 Q3 -2 6 0 Q9 2 12 0" stroke="#C9A227" strokeWidth="1.4" fill="none"/>
+                        <circle cx="3" cy="0" r="1" fill="#C9A227"/>
+                        <circle cx="9" cy="0" r="1" fill="#C9A227"/>
+                      </g>
+                      <g transform="translate(48, 16)">
+                        <path d="M0 0 Q3 -2 6 0 Q9 2 12 0" stroke="#C9A227" strokeWidth="1.4" fill="none"/>
+                        <circle cx="3" cy="0" r="1" fill="#C9A227"/>
+                        <circle cx="9" cy="0" r="1" fill="#C9A227"/>
+                      </g>
+                      {/* Bottom Scroll Motifs */}
+                      <g transform="translate(20, 48)">
+                        <path d="M0 0 Q3 2 6 0 Q9 -2 12 0" stroke="#C9A227" strokeWidth="1.4" fill="none"/>
+                        <circle cx="3" cy="0" r="1" fill="#C9A227"/>
+                        <circle cx="9" cy="0" r="1" fill="#C9A227"/>
+                      </g>
+                      <g transform="translate(48, 48)">
+                        <path d="M0 0 Q3 2 6 0 Q9 -2 12 0" stroke="#C9A227" strokeWidth="1.4" fill="none"/>
+                        <circle cx="3" cy="0" r="1" fill="#C9A227"/>
+                        <circle cx="9" cy="0" r="1" fill="#C9A227"/>
+                      </g>
+                      {/* Small decorative circles */}
+                      <circle cx="15" cy="8" r="2" fill="none" stroke="#C9A227" strokeWidth="1"/>
+                      <circle cx="65" cy="8" r="2" fill="none" stroke="#C9A227" strokeWidth="1"/>
+                      <circle cx="15" cy="56" r="2" fill="none" stroke="#C9A227" strokeWidth="1"/>
+                      <circle cx="65" cy="56" r="2" fill="none" stroke="#C9A227" strokeWidth="1"/>
+                    </pattern>
+                  </defs>
+                  <rect width="100%" height="100%" fill="url(#mainPatternBand2)"/>
               </svg>
             </div>
-            <h2 className="text-4xl md:text-5xl font-serif font-bold text-charcoal mb-4">
+              
+              {/* Title in Center - with solid background above pattern */}
+              <div className="relative z-20 flex items-center justify-center h-16">
+                <div className="bg-cream-100 px-10 py-3 rounded-lg shadow-lg border-2 border-brass-gold/20">
+                  <h2 className="text-3xl md:text-4xl lg:text-5xl font-serif font-bold text-charcoal">
               Why Choose BodhOm
             </h2>
-            {/* Decorative Pattern Below Title */}
-            <div className="flex justify-center mt-4">
-              <svg width="320" height="24" viewBox="0 0 320 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-brass-gold">
-                {/* Left Spiral */}
-                <path d="M20 12 Q25 18 30 12 Q35 6 40 12" stroke="currentColor" strokeWidth="1.5" fill="none"/>
-                <circle cx="15" cy="12" r="3" fill="currentColor"/>
-                {/* Left Small Flowers */}
-                <g transform="translate(55, 12)">
-                  <circle cx="0" cy="0" r="4" fill="none" stroke="currentColor" strokeWidth="1"/>
-                  <circle cx="0" cy="0" r="1.5" fill="currentColor"/>
-                </g>
-                {/* Left Horizontal Line with Dots */}
-                <line x1="70" y1="12" x2="140" y2="12" stroke="currentColor" strokeWidth="1"/>
-                <circle cx="85" cy="12" r="2" fill="currentColor"/>
-                <circle cx="105" cy="12" r="2" fill="currentColor"/>
-                <circle cx="125" cy="12" r="2" fill="currentColor"/>
-                {/* Center Diamond Motif */}
-                <g transform="translate(160, 12)">
-                  <path d="M0 -8 L8 0 L0 8 L-8 0 Z" fill="none" stroke="currentColor" strokeWidth="1.5"/>
-                  <path d="M0 -4 L4 0 L0 4 L-4 0 Z" fill="currentColor"/>
-                </g>
-                {/* Right Horizontal Line with Dots */}
-                <line x1="180" y1="12" x2="250" y2="12" stroke="currentColor" strokeWidth="1"/>
-                <circle cx="195" cy="12" r="2" fill="currentColor"/>
-                <circle cx="215" cy="12" r="2" fill="currentColor"/>
-                <circle cx="235" cy="12" r="2" fill="currentColor"/>
-                {/* Right Small Flowers */}
-                <g transform="translate(265, 12)">
-                  <circle cx="0" cy="0" r="4" fill="none" stroke="currentColor" strokeWidth="1"/>
-                  <circle cx="0" cy="0" r="1.5" fill="currentColor"/>
-                </g>
-                {/* Right Spiral */}
-                <path d="M300 12 Q295 18 290 12 Q285 6 280 12" stroke="currentColor" strokeWidth="1.5" fill="none"/>
-                <circle cx="305" cy="12" r="3" fill="currentColor"/>
+                </div>
+              </div>
+              
+              {/* Lower Border - Dense Chain-like Diamond Pattern */}
+              <div className="absolute bottom-0 left-0 right-0 h-3 border-t border-brass-gold/30 z-0">
+                <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 12" preserveAspectRatio="none">
+                  <defs>
+                    <pattern id="bottomBorderPattern2" x="0" y="0" width="25" height="12" patternUnits="userSpaceOnUse">
+                      <path d="M12.5 0 L20 6 L12.5 12 L5 6 Z" fill="none" stroke="#C9A227" strokeWidth="1.2"/>
+                      <line x1="12.5" y1="0" x2="12.5" y2="12" stroke="#C9A227" strokeWidth="1"/>
+                      <line x1="5" y1="6" x2="20" y2="6" stroke="#C9A227" strokeWidth="1"/>
+                      <circle cx="12.5" cy="6" r="1.5" fill="#C9A227" opacity="0.8"/>
+                    </pattern>
+                  </defs>
+                  <rect width="100%" height="100%" fill="url(#bottomBorderPattern2)"/>
               </svg>
             </div>
           </div>
+          </div>
+        
+        <div className="container-elegant relative z-10">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative z-10">
             {[
               { icon: <Hammer className="w-10 h-10 text-charcoal" />, title: 'Authentic Craftsmanship', desc: 'Each piece is handcrafted by skilled artisans from Odisha, preserving traditional techniques passed down through generations.' },
@@ -855,14 +1038,107 @@ export default function HomePage() {
             ].map((item, index) => (
               <div 
                 key={index}
-                className="text-center p-8 rounded-2xl bg-white shadow-soft hover:shadow-soft-lg transition-all duration-500 card-glow"
+                className="relative text-center p-8 rounded-2xl bg-white shadow-soft hover:shadow-soft-lg transition-all duration-500 card-glow border-2 border-brass-gold/30"
                 style={{ animationDelay: `${index * 0.15}s` }}
               >
+                {/* Decorative Border Frame */}
+                <div className="absolute -inset-1 md:-inset-1.5 z-10 pointer-events-none">
+                  {/* Top Border */}
+                  <div className="absolute top-0 left-0 right-0 h-2.5 md:h-3">
+                    <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 12" preserveAspectRatio="none">
+                      <defs>
+                        <pattern id={`whyChooseTop${index}`} x="0" y="0" width="25" height="12" patternUnits="userSpaceOnUse">
+                          <path d="M3 6 L7 3 L11 6 L7 9 Z" fill="#C9A227" opacity="1"/>
+                          <path d="M14 6 L18 3 L22 6 L18 9 Z" fill="#C9A227" opacity="1"/>
+                          <circle cx="8" cy="6" r="1.5" fill="#C9A227" opacity="0.9"/>
+                          <circle cx="17" cy="6" r="1.5" fill="#C9A227" opacity="0.9"/>
+                          <line x1="0" y1="6" x2="3" y2="6" stroke="#C9A227" strokeWidth="1" opacity="0.8"/>
+                          <line x1="22" y1="6" x2="25" y2="6" stroke="#C9A227" strokeWidth="1" opacity="0.8"/>
+                        </pattern>
+                      </defs>
+                      <rect width="100%" height="100%" fill={`url(#whyChooseTop${index})`}/>
+                    </svg>
+                  </div>
+                  {/* Right Border */}
+                  <div className="absolute top-0 right-0 bottom-0 w-2.5 md:w-3">
+                    <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 200" preserveAspectRatio="none">
+                      <defs>
+                        <pattern id={`whyChooseRight${index}`} x="0" y="0" width="12" height="25" patternUnits="userSpaceOnUse">
+                          <path d="M6 3 L9 7 L6 11 L3 7 Z" fill="#C9A227" opacity="1"/>
+                          <path d="M6 14 L9 18 L6 22 L3 18 Z" fill="#C9A227" opacity="1"/>
+                          <circle cx="6" cy="8" r="1.5" fill="#C9A227" opacity="0.9"/>
+                          <circle cx="6" cy="17" r="1.5" fill="#C9A227" opacity="0.9"/>
+                        </pattern>
+                      </defs>
+                      <rect width="100%" height="100%" fill={`url(#whyChooseRight${index})`}/>
+                    </svg>
+                  </div>
+                  {/* Bottom Border */}
+                  <div className="absolute bottom-0 left-0 right-0 h-2.5 md:h-3">
+                    <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 12" preserveAspectRatio="none">
+                      <defs>
+                        <pattern id={`whyChooseBottom${index}`} x="0" y="0" width="25" height="12" patternUnits="userSpaceOnUse">
+                          <path d="M3 6 L7 9 L11 6 L7 3 Z" fill="#C9A227" opacity="1"/>
+                          <path d="M14 6 L18 9 L22 6 L18 3 Z" fill="#C9A227" opacity="1"/>
+                          <circle cx="8" cy="6" r="1.5" fill="#C9A227" opacity="0.9"/>
+                          <circle cx="17" cy="6" r="1.5" fill="#C9A227" opacity="0.9"/>
+                        </pattern>
+                      </defs>
+                      <rect width="100%" height="100%" fill={`url(#whyChooseBottom${index})`}/>
+                    </svg>
+                  </div>
+                  {/* Left Border */}
+                  <div className="absolute top-0 left-0 bottom-0 w-2.5 md:w-3">
+                    <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 200" preserveAspectRatio="none">
+                      <defs>
+                        <pattern id={`whyChooseLeft${index}`} x="0" y="0" width="12" height="25" patternUnits="userSpaceOnUse">
+                          <path d="M6 3 L9 7 L6 11 L3 7 Z" fill="#C9A227" opacity="1"/>
+                          <path d="M6 14 L9 18 L6 22 L3 18 Z" fill="#C9A227" opacity="1"/>
+                          <circle cx="6" cy="8" r="1.5" fill="#C9A227" opacity="0.9"/>
+                          <circle cx="6" cy="17" r="1.5" fill="#C9A227" opacity="0.9"/>
+                        </pattern>
+                      </defs>
+                      <rect width="100%" height="100%" fill={`url(#whyChooseLeft${index})`}/>
+                    </svg>
+                  </div>
+                  {/* Corner Decorations */}
+                  <div className="absolute -top-1 -left-1 w-8 h-8 md:w-10 md:h-10">
+                    <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40">
+                      <circle cx="20" cy="20" r="12" fill="none" stroke="#C9A227" strokeWidth="2" opacity="0.9"/>
+                      <circle cx="20" cy="20" r="6" fill="#C9A227" opacity="0.7"/>
+                      <path d="M20 8 L20 14 M20 26 L20 32 M8 20 L14 20 M26 20 L32 20" stroke="#C9A227" strokeWidth="1.5" opacity="0.8"/>
+                    </svg>
+                  </div>
+                  <div className="absolute -top-1 -right-1 w-8 h-8 md:w-10 md:h-10">
+                    <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40">
+                      <circle cx="20" cy="20" r="12" fill="none" stroke="#C9A227" strokeWidth="2" opacity="0.9"/>
+                      <circle cx="20" cy="20" r="6" fill="#C9A227" opacity="0.7"/>
+                      <path d="M20 8 L20 14 M20 26 L20 32 M8 20 L14 20 M26 20 L32 20" stroke="#C9A227" strokeWidth="1.5" opacity="0.8"/>
+                    </svg>
+                  </div>
+                  <div className="absolute -bottom-1 -left-1 w-8 h-8 md:w-10 md:h-10">
+                    <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40">
+                      <circle cx="20" cy="20" r="12" fill="none" stroke="#C9A227" strokeWidth="2" opacity="0.9"/>
+                      <circle cx="20" cy="20" r="6" fill="#C9A227" opacity="0.7"/>
+                      <path d="M20 8 L20 14 M20 26 L20 32 M8 20 L14 20 M26 20 L32 20" stroke="#C9A227" strokeWidth="1.5" opacity="0.8"/>
+                    </svg>
+                  </div>
+                  <div className="absolute -bottom-1 -right-1 w-8 h-8 md:w-10 md:h-10">
+                    <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40">
+                      <circle cx="20" cy="20" r="12" fill="none" stroke="#C9A227" strokeWidth="2" opacity="0.9"/>
+                      <circle cx="20" cy="20" r="6" fill="#C9A227" opacity="0.7"/>
+                      <path d="M20 8 L20 14 M20 26 L20 32 M8 20 L14 20 M26 20 L32 20" stroke="#C9A227" strokeWidth="1.5" opacity="0.8"/>
+                    </svg>
+                  </div>
+                </div>
+                
+                <div className="relative z-0">
                 <div className="w-20 h-20 bg-cream-200 rounded-full flex items-center justify-center mx-auto mb-6">
                   {item.icon}
                 </div>
                 <h3 className="text-2xl font-serif font-semibold text-charcoal mb-3">{item.title}</h3>
                 <p className="text-charcoal-400 leading-relaxed">{item.desc}</p>
+                </div>
               </div>
             ))}
           </div>
@@ -934,108 +1210,220 @@ export default function HomePage() {
         <div className="absolute top-0 left-0 w-64 h-64 bg-brass-gold/5 rounded-full blur-3xl"></div>
         <div className="absolute bottom-0 right-0 w-96 h-96 bg-brass-gold/5 rounded-full blur-3xl"></div>
         
-        {/* Gradient overlay */}
+        {/* Full-width Sacred Geometry Strap - Outside container for full viewport width - Above overlay */}
+        <div className="w-screen relative mb-14 z-20" style={{ marginLeft: 'calc(-50vw + 50%)' }}>
+          <p className="text-charcoal font-semibold tracking-widest uppercase mb-3 text-center text-lg">What Our Customers Say</p>
+          {/* Sacred Geometry Pattern Strap */}
+          <div className="relative w-full bg-cream-DEFAULT py-6 overflow-hidden">
+            {/* Top Border - Dense Leaf/Vine Motifs */}
+            <div className="absolute top-0 left-0 right-0 h-3 border-b border-brass-gold/30 z-0">
+              <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 12" preserveAspectRatio="none">
+                <defs>
+                  <pattern id="topBorderPattern3" x="0" y="0" width="30" height="12" patternUnits="userSpaceOnUse">
+                    <path d="M5 6 L8 3 L10 6 L8 9 Z" fill="#C9A227" opacity="0.9"/>
+                    <path d="M15 6 L18 3 L20 6 L18 9 Z" fill="#C9A227" opacity="0.9"/>
+                    <path d="M25 6 L28 3 L30 6 L28 9 Z" fill="#C9A227" opacity="0.9"/>
+                    <circle cx="10" cy="6" r="1.5" fill="#C9A227" opacity="0.7"/>
+                    <circle cx="20" cy="6" r="1.5" fill="#C9A227" opacity="0.7"/>
+                  </pattern>
+                </defs>
+                <rect width="100%" height="100%" fill="url(#topBorderPattern3)"/>
+              </svg>
+            </div>
+            
+            {/* Main Pattern Band - Dense with Circles, Chakras, and Multi-patterns */}
+            <div className="absolute top-3 left-0 right-0 h-16 z-0">
+              <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 64" preserveAspectRatio="none">
+                <defs>
+                  <pattern id="mainPatternBand3" x="0" y="0" width="80" height="64" patternUnits="userSpaceOnUse">
+                    {/* Central Chakra Circle */}
+                    <g transform="translate(40, 32)">
+                      <circle cx="0" cy="0" r="12" fill="none" stroke="#C9A227" strokeWidth="1.8"/>
+                      <circle cx="0" cy="0" r="8" fill="none" stroke="#C9A227" strokeWidth="1.2"/>
+                      <circle cx="0" cy="0" r="4" fill="#C9A227"/>
+                      {/* 8 Petals around chakra */}
+                      <ellipse cx="0" cy="-10" rx="2" ry="6" fill="#C9A227"/>
+                      <ellipse cx="7" cy="-7" rx="2" ry="6" fill="#C9A227" transform="rotate(45)"/>
+                      <ellipse cx="10" cy="0" rx="2" ry="6" fill="#C9A227" transform="rotate(90)"/>
+                      <ellipse cx="7" cy="7" rx="2" ry="6" fill="#C9A227" transform="rotate(135)"/>
+                      <ellipse cx="0" cy="10" rx="2" ry="6" fill="#C9A227" transform="rotate(180)"/>
+                      <ellipse cx="-7" cy="7" rx="2" ry="6" fill="#C9A227" transform="rotate(225)"/>
+                      <ellipse cx="-10" cy="0" rx="2" ry="6" fill="#C9A227" transform="rotate(270)"/>
+                      <ellipse cx="-7" cy="-7" rx="2" ry="6" fill="#C9A227" transform="rotate(315)"/>
+                    </g>
+                    {/* Left Side - Nested Circles */}
+                    <g transform="translate(10, 32)">
+                      <circle cx="0" cy="0" r="6" fill="none" stroke="#C9A227" strokeWidth="1.4"/>
+                      <circle cx="0" cy="0" r="3" fill="none" stroke="#C9A227" strokeWidth="1"/>
+                      <circle cx="0" cy="0" r="1" fill="#C9A227"/>
+                    </g>
+                    {/* Right Side - Nested Circles */}
+                    <g transform="translate(70, 32)">
+                      <circle cx="0" cy="0" r="6" fill="none" stroke="#C9A227" strokeWidth="1.4"/>
+                      <circle cx="0" cy="0" r="3" fill="none" stroke="#C9A227" strokeWidth="1"/>
+                      <circle cx="0" cy="0" r="1" fill="#C9A227"/>
+                    </g>
+                    {/* Top Scroll Motifs */}
+                    <g transform="translate(20, 16)">
+                      <path d="M0 0 Q3 -2 6 0 Q9 2 12 0" stroke="#C9A227" strokeWidth="1.4" fill="none"/>
+                      <circle cx="3" cy="0" r="1" fill="#C9A227"/>
+                      <circle cx="9" cy="0" r="1" fill="#C9A227"/>
+                    </g>
+                    <g transform="translate(48, 16)">
+                      <path d="M0 0 Q3 -2 6 0 Q9 2 12 0" stroke="#C9A227" strokeWidth="1.4" fill="none"/>
+                      <circle cx="3" cy="0" r="1" fill="#C9A227"/>
+                      <circle cx="9" cy="0" r="1" fill="#C9A227"/>
+                    </g>
+                    {/* Bottom Scroll Motifs */}
+                    <g transform="translate(20, 48)">
+                      <path d="M0 0 Q3 2 6 0 Q9 -2 12 0" stroke="#C9A227" strokeWidth="1.4" fill="none"/>
+                      <circle cx="3" cy="0" r="1" fill="#C9A227"/>
+                      <circle cx="9" cy="0" r="1" fill="#C9A227"/>
+                    </g>
+                    <g transform="translate(48, 48)">
+                      <path d="M0 0 Q3 2 6 0 Q9 -2 12 0" stroke="#C9A227" strokeWidth="1.4" fill="none"/>
+                      <circle cx="3" cy="0" r="1" fill="#C9A227"/>
+                      <circle cx="9" cy="0" r="1" fill="#C9A227"/>
+                    </g>
+                    {/* Small decorative circles */}
+                    <circle cx="15" cy="8" r="2" fill="none" stroke="#C9A227" strokeWidth="1"/>
+                    <circle cx="65" cy="8" r="2" fill="none" stroke="#C9A227" strokeWidth="1"/>
+                    <circle cx="15" cy="56" r="2" fill="none" stroke="#C9A227" strokeWidth="1"/>
+                    <circle cx="65" cy="56" r="2" fill="none" stroke="#C9A227" strokeWidth="1"/>
+                  </pattern>
+                </defs>
+                <rect width="100%" height="100%" fill="url(#mainPatternBand3)"/>
+              </svg>
+            </div>
+            
+            {/* Title in Center - with solid background above pattern */}
+            <div className="relative z-20 flex items-center justify-center h-16">
+              <div className="bg-cream-100 px-10 py-3 rounded-lg shadow-lg border-2 border-brass-gold/20">
+                <h2 className="text-3xl md:text-4xl lg:text-5xl font-serif font-bold text-charcoal">
+              Testimonials
+            </h2>
+              </div>
+            </div>
+            
+            {/* Lower Border - Dense Chain-like Diamond Pattern */}
+            <div className="absolute bottom-0 left-0 right-0 h-3 border-t border-brass-gold/30 z-0">
+              <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 12" preserveAspectRatio="none">
+                <defs>
+                  <pattern id="bottomBorderPattern3" x="0" y="0" width="25" height="12" patternUnits="userSpaceOnUse">
+                    <path d="M12.5 0 L20 6 L12.5 12 L5 6 Z" fill="none" stroke="#C9A227" strokeWidth="1.2"/>
+                    <line x1="12.5" y1="0" x2="12.5" y2="12" stroke="#C9A227" strokeWidth="1"/>
+                    <line x1="5" y1="6" x2="20" y2="6" stroke="#C9A227" strokeWidth="1"/>
+                    <circle cx="12.5" cy="6" r="1.5" fill="#C9A227" opacity="0.8"/>
+                  </pattern>
+                </defs>
+                <rect width="100%" height="100%" fill="url(#bottomBorderPattern3)"/>
+              </svg>
+            </div>
+            </div>
+          </div>
+        
+        {/* Gradient overlay - moved below strap */}
         <div className="absolute inset-0 bg-gradient-to-b from-cream-DEFAULT/80 via-transparent to-cream-DEFAULT/80 pointer-events-none z-[1]"></div>
         
         <div className="container-elegant relative z-10">
-          <div className="text-center mb-14">
-            <p className="text-brass-gold font-medium tracking-widest uppercase mb-3">What Our Customers Say</p>
-            {/* Decorative Pattern Above Title */}
-            <div className="flex justify-center mb-4">
-              <svg width="320" height="24" viewBox="0 0 320 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-brass-gold">
-                {/* Left Spiral */}
-                <path d="M20 12 Q25 6 30 12 Q35 18 40 12" stroke="currentColor" strokeWidth="1.5" fill="none"/>
-                <circle cx="15" cy="12" r="3" fill="currentColor"/>
-                {/* Left Floral Rosette */}
-                <g transform="translate(60, 12)">
-                  <circle cx="0" cy="0" r="6" fill="none" stroke="currentColor" strokeWidth="1"/>
-                  <circle cx="0" cy="-4" r="2" fill="currentColor"/>
-                  <circle cx="4" cy="0" r="2" fill="currentColor"/>
-                  <circle cx="0" cy="4" r="2" fill="currentColor"/>
-                  <circle cx="-4" cy="0" r="2" fill="currentColor"/>
-                  <circle cx="0" cy="0" r="1.5" fill="currentColor"/>
-                </g>
-                {/* Left Decorative Leaves */}
-                <path d="M80 12 L95 8 L90 12 L95 16 Z" fill="currentColor"/>
-                <path d="M100 12 L115 8 L110 12 L115 16 Z" fill="currentColor"/>
-                {/* Center Large Floral */}
-                <g transform="translate(160, 12)">
-                  <circle cx="0" cy="0" r="8" fill="none" stroke="currentColor" strokeWidth="1.5"/>
-                  <circle cx="0" cy="-5" r="2.5" fill="currentColor"/>
-                  <circle cx="5" cy="0" r="2.5" fill="currentColor"/>
-                  <circle cx="0" cy="5" r="2.5" fill="currentColor"/>
-                  <circle cx="-5" cy="0" r="2.5" fill="currentColor"/>
-                  <circle cx="3.5" cy="-3.5" r="1.5" fill="currentColor"/>
-                  <circle cx="3.5" cy="3.5" r="1.5" fill="currentColor"/>
-                  <circle cx="-3.5" cy="3.5" r="1.5" fill="currentColor"/>
-                  <circle cx="-3.5" cy="-3.5" r="1.5" fill="currentColor"/>
-                  <circle cx="0" cy="0" r="2" fill="currentColor"/>
-                </g>
-                {/* Right Decorative Leaves */}
-                <path d="M240 12 L225 8 L230 12 L225 16 Z" fill="currentColor"/>
-                <path d="M220 12 L205 8 L210 12 L205 16 Z" fill="currentColor"/>
-                {/* Right Floral Rosette */}
-                <g transform="translate(260, 12)">
-                  <circle cx="0" cy="0" r="6" fill="none" stroke="currentColor" strokeWidth="1"/>
-                  <circle cx="0" cy="-4" r="2" fill="currentColor"/>
-                  <circle cx="4" cy="0" r="2" fill="currentColor"/>
-                  <circle cx="0" cy="4" r="2" fill="currentColor"/>
-                  <circle cx="-4" cy="0" r="2" fill="currentColor"/>
-                  <circle cx="0" cy="0" r="1.5" fill="currentColor"/>
-                </g>
-                {/* Right Spiral */}
-                <path d="M300 12 Q295 6 290 12 Q285 18 280 12" stroke="currentColor" strokeWidth="1.5" fill="none"/>
-                <circle cx="305" cy="12" r="3" fill="currentColor"/>
-              </svg>
-            </div>
-            <h2 className="text-4xl md:text-5xl font-serif font-bold text-charcoal mb-4">
-              Testimonials
-            </h2>
-            {/* Decorative Pattern Below Title */}
-            <div className="flex justify-center mt-4">
-              <svg width="320" height="24" viewBox="0 0 320 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-brass-gold">
-                {/* Left Spiral */}
-                <path d="M20 12 Q25 18 30 12 Q35 6 40 12" stroke="currentColor" strokeWidth="1.5" fill="none"/>
-                <circle cx="15" cy="12" r="3" fill="currentColor"/>
-                {/* Left Small Flowers */}
-                <g transform="translate(55, 12)">
-                  <circle cx="0" cy="0" r="4" fill="none" stroke="currentColor" strokeWidth="1"/>
-                  <circle cx="0" cy="0" r="1.5" fill="currentColor"/>
-                </g>
-                {/* Left Horizontal Line with Dots */}
-                <line x1="70" y1="12" x2="140" y2="12" stroke="currentColor" strokeWidth="1"/>
-                <circle cx="85" cy="12" r="2" fill="currentColor"/>
-                <circle cx="105" cy="12" r="2" fill="currentColor"/>
-                <circle cx="125" cy="12" r="2" fill="currentColor"/>
-                {/* Center Diamond Motif */}
-                <g transform="translate(160, 12)">
-                  <path d="M0 -8 L8 0 L0 8 L-8 0 Z" fill="none" stroke="currentColor" strokeWidth="1.5"/>
-                  <path d="M0 -4 L4 0 L0 4 L-4 0 Z" fill="currentColor"/>
-                </g>
-                {/* Right Horizontal Line with Dots */}
-                <line x1="180" y1="12" x2="250" y2="12" stroke="currentColor" strokeWidth="1"/>
-                <circle cx="195" cy="12" r="2" fill="currentColor"/>
-                <circle cx="215" cy="12" r="2" fill="currentColor"/>
-                <circle cx="235" cy="12" r="2" fill="currentColor"/>
-                {/* Right Small Flowers */}
-                <g transform="translate(265, 12)">
-                  <circle cx="0" cy="0" r="4" fill="none" stroke="currentColor" strokeWidth="1"/>
-                  <circle cx="0" cy="0" r="1.5" fill="currentColor"/>
-                </g>
-                {/* Right Spiral */}
-                <path d="M300 12 Q295 18 290 12 Q285 6 280 12" stroke="currentColor" strokeWidth="1.5" fill="none"/>
-                <circle cx="305" cy="12" r="3" fill="currentColor"/>
-              </svg>
-            </div>
-          </div>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative z-10">
             {testimonials.map((testimonial, index) => (
               <div 
                 key={testimonial.id}
-                className="testimonial-card rounded-2xl p-8 relative"
+                className="testimonial-card rounded-2xl p-8 relative border-2 border-brass-gold/30"
                 style={{ animationDelay: `${index * 0.15}s` }}
               >
+                {/* Decorative Border Frame */}
+                <div className="absolute -inset-1 md:-inset-1.5 z-10 pointer-events-none">
+                  {/* Top Border */}
+                  <div className="absolute top-0 left-0 right-0 h-2.5 md:h-3">
+                    <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 12" preserveAspectRatio="none">
+                      <defs>
+                        <pattern id={`testimonialTop${index}`} x="0" y="0" width="25" height="12" patternUnits="userSpaceOnUse">
+                          <path d="M3 6 L7 3 L11 6 L7 9 Z" fill="#C9A227" opacity="1"/>
+                          <path d="M14 6 L18 3 L22 6 L18 9 Z" fill="#C9A227" opacity="1"/>
+                          <circle cx="8" cy="6" r="1.5" fill="#C9A227" opacity="0.9"/>
+                          <circle cx="17" cy="6" r="1.5" fill="#C9A227" opacity="0.9"/>
+                        </pattern>
+                      </defs>
+                      <rect width="100%" height="100%" fill={`url(#testimonialTop${index})`}/>
+                    </svg>
+                  </div>
+                  {/* Right Border */}
+                  <div className="absolute top-0 right-0 bottom-0 w-2.5 md:w-3">
+                    <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 200" preserveAspectRatio="none">
+                      <defs>
+                        <pattern id={`testimonialRight${index}`} x="0" y="0" width="12" height="25" patternUnits="userSpaceOnUse">
+                          <path d="M6 3 L9 7 L6 11 L3 7 Z" fill="#C9A227" opacity="1"/>
+                          <path d="M6 14 L9 18 L6 22 L3 18 Z" fill="#C9A227" opacity="1"/>
+                          <circle cx="6" cy="8" r="1.5" fill="#C9A227" opacity="0.9"/>
+                          <circle cx="6" cy="17" r="1.5" fill="#C9A227" opacity="0.9"/>
+                        </pattern>
+                      </defs>
+                      <rect width="100%" height="100%" fill={`url(#testimonialRight${index})`}/>
+                    </svg>
+                  </div>
+                  {/* Bottom Border */}
+                  <div className="absolute bottom-0 left-0 right-0 h-2.5 md:h-3">
+                    <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 12" preserveAspectRatio="none">
+                      <defs>
+                        <pattern id={`testimonialBottom${index}`} x="0" y="0" width="25" height="12" patternUnits="userSpaceOnUse">
+                          <path d="M3 6 L7 9 L11 6 L7 3 Z" fill="#C9A227" opacity="1"/>
+                          <path d="M14 6 L18 9 L22 6 L18 3 Z" fill="#C9A227" opacity="1"/>
+                          <circle cx="8" cy="6" r="1.5" fill="#C9A227" opacity="0.9"/>
+                          <circle cx="17" cy="6" r="1.5" fill="#C9A227" opacity="0.9"/>
+                        </pattern>
+                      </defs>
+                      <rect width="100%" height="100%" fill={`url(#testimonialBottom${index})`}/>
+                    </svg>
+                  </div>
+                  {/* Left Border */}
+                  <div className="absolute top-0 left-0 bottom-0 w-2.5 md:w-3">
+                    <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 200" preserveAspectRatio="none">
+                      <defs>
+                        <pattern id={`testimonialLeft${index}`} x="0" y="0" width="12" height="25" patternUnits="userSpaceOnUse">
+                          <path d="M6 3 L9 7 L6 11 L3 7 Z" fill="#C9A227" opacity="1"/>
+                          <path d="M6 14 L9 18 L6 22 L3 18 Z" fill="#C9A227" opacity="1"/>
+                          <circle cx="6" cy="8" r="1.5" fill="#C9A227" opacity="0.9"/>
+                          <circle cx="6" cy="17" r="1.5" fill="#C9A227" opacity="0.9"/>
+                        </pattern>
+                      </defs>
+                      <rect width="100%" height="100%" fill={`url(#testimonialLeft${index})`}/>
+                    </svg>
+                  </div>
+                  {/* Corner Decorations */}
+                  <div className="absolute -top-1 -left-1 w-8 h-8 md:w-10 md:h-10">
+                    <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40">
+                      <circle cx="20" cy="20" r="12" fill="none" stroke="#C9A227" strokeWidth="2" opacity="0.9"/>
+                      <circle cx="20" cy="20" r="6" fill="#C9A227" opacity="0.7"/>
+                      <path d="M20 8 L20 14 M20 26 L20 32 M8 20 L14 20 M26 20 L32 20" stroke="#C9A227" strokeWidth="1.5" opacity="0.8"/>
+                    </svg>
+                  </div>
+                  <div className="absolute -top-1 -right-1 w-8 h-8 md:w-10 md:h-10">
+                    <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40">
+                      <circle cx="20" cy="20" r="12" fill="none" stroke="#C9A227" strokeWidth="2" opacity="0.9"/>
+                      <circle cx="20" cy="20" r="6" fill="#C9A227" opacity="0.7"/>
+                      <path d="M20 8 L20 14 M20 26 L20 32 M8 20 L14 20 M26 20 L32 20" stroke="#C9A227" strokeWidth="1.5" opacity="0.8"/>
+                    </svg>
+                  </div>
+                  <div className="absolute -bottom-1 -left-1 w-8 h-8 md:w-10 md:h-10">
+                    <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40">
+                      <circle cx="20" cy="20" r="12" fill="none" stroke="#C9A227" strokeWidth="2" opacity="0.9"/>
+                      <circle cx="20" cy="20" r="6" fill="#C9A227" opacity="0.7"/>
+                      <path d="M20 8 L20 14 M20 26 L20 32 M8 20 L14 20 M26 20 L32 20" stroke="#C9A227" strokeWidth="1.5" opacity="0.8"/>
+                    </svg>
+                  </div>
+                  <div className="absolute -bottom-1 -right-1 w-8 h-8 md:w-10 md:h-10">
+                    <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40">
+                      <circle cx="20" cy="20" r="12" fill="none" stroke="#C9A227" strokeWidth="2" opacity="0.9"/>
+                      <circle cx="20" cy="20" r="6" fill="#C9A227" opacity="0.7"/>
+                      <path d="M20 8 L20 14 M20 26 L20 32 M8 20 L14 20 M26 20 L32 20" stroke="#C9A227" strokeWidth="1.5" opacity="0.8"/>
+                    </svg>
+                  </div>
+                </div>
+                
+                <div className="relative z-0">
                 <div className="quote-mark absolute top-4 right-6">"</div>
                 
                 {/* Rating */}
@@ -1063,6 +1451,7 @@ export default function HomePage() {
                   <div>
                     <h4 className="font-semibold text-charcoal">{testimonial.name}</h4>
                     <p className="text-charcoal-400 text-sm">{testimonial.location}</p>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -1093,8 +1482,97 @@ export default function HomePage() {
           {blogPosts.length > 0 ? (
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
               {/* Featured Blog Post */}
-              <div className="lg:col-span-2 blog-card rounded-2xl overflow-hidden bg-white shadow-soft hover:shadow-soft-lg">
-                <Link href={`/blog/${blogPosts[0].slug || blogPosts[0].id}`}>
+              <div className="lg:col-span-2 blog-card rounded-2xl overflow-hidden bg-white shadow-soft hover:shadow-soft-lg relative border-2 border-brass-gold/30">
+                {/* Decorative Border Frame */}
+                <div className="absolute -inset-1 md:-inset-1.5 z-10 pointer-events-none">
+                  {/* Top Border */}
+                  <div className="absolute top-0 left-0 right-0 h-2.5 md:h-3">
+                    <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 12" preserveAspectRatio="none">
+                      <defs>
+                        <pattern id="blogFeaturedTop" x="0" y="0" width="25" height="12" patternUnits="userSpaceOnUse">
+                          <path d="M3 6 L7 3 L11 6 L7 9 Z" fill="#C9A227" opacity="1"/>
+                          <path d="M14 6 L18 3 L22 6 L18 9 Z" fill="#C9A227" opacity="1"/>
+                          <circle cx="8" cy="6" r="1.5" fill="#C9A227" opacity="0.9"/>
+                          <circle cx="17" cy="6" r="1.5" fill="#C9A227" opacity="0.9"/>
+                        </pattern>
+                      </defs>
+                      <rect width="100%" height="100%" fill="url(#blogFeaturedTop)"/>
+                    </svg>
+                  </div>
+                  {/* Right Border */}
+                  <div className="absolute top-0 right-0 bottom-0 w-2.5 md:w-3">
+                    <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 200" preserveAspectRatio="none">
+                      <defs>
+                        <pattern id="blogFeaturedRight" x="0" y="0" width="12" height="25" patternUnits="userSpaceOnUse">
+                          <path d="M6 3 L9 7 L6 11 L3 7 Z" fill="#C9A227" opacity="1"/>
+                          <path d="M6 14 L9 18 L6 22 L3 18 Z" fill="#C9A227" opacity="1"/>
+                          <circle cx="6" cy="8" r="1.5" fill="#C9A227" opacity="0.9"/>
+                          <circle cx="6" cy="17" r="1.5" fill="#C9A227" opacity="0.9"/>
+                        </pattern>
+                      </defs>
+                      <rect width="100%" height="100%" fill="url(#blogFeaturedRight)"/>
+                    </svg>
+                  </div>
+                  {/* Bottom Border */}
+                  <div className="absolute bottom-0 left-0 right-0 h-2.5 md:h-3">
+                    <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 12" preserveAspectRatio="none">
+                      <defs>
+                        <pattern id="blogFeaturedBottom" x="0" y="0" width="25" height="12" patternUnits="userSpaceOnUse">
+                          <path d="M3 6 L7 9 L11 6 L7 3 Z" fill="#C9A227" opacity="1"/>
+                          <path d="M14 6 L18 9 L22 6 L18 3 Z" fill="#C9A227" opacity="1"/>
+                          <circle cx="8" cy="6" r="1.5" fill="#C9A227" opacity="0.9"/>
+                          <circle cx="17" cy="6" r="1.5" fill="#C9A227" opacity="0.9"/>
+                        </pattern>
+                      </defs>
+                      <rect width="100%" height="100%" fill="url(#blogFeaturedBottom)"/>
+                    </svg>
+                  </div>
+                  {/* Left Border */}
+                  <div className="absolute top-0 left-0 bottom-0 w-2.5 md:w-3">
+                    <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 200" preserveAspectRatio="none">
+                      <defs>
+                        <pattern id="blogFeaturedLeft" x="0" y="0" width="12" height="25" patternUnits="userSpaceOnUse">
+                          <path d="M6 3 L9 7 L6 11 L3 7 Z" fill="#C9A227" opacity="1"/>
+                          <path d="M6 14 L9 18 L6 22 L3 18 Z" fill="#C9A227" opacity="1"/>
+                          <circle cx="6" cy="8" r="1.5" fill="#C9A227" opacity="0.9"/>
+                          <circle cx="6" cy="17" r="1.5" fill="#C9A227" opacity="0.9"/>
+                        </pattern>
+                      </defs>
+                      <rect width="100%" height="100%" fill="url(#blogFeaturedLeft)"/>
+                    </svg>
+                  </div>
+                  {/* Corner Decorations */}
+                  <div className="absolute -top-1 -left-1 w-8 h-8 md:w-10 md:h-10">
+                    <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40">
+                      <circle cx="20" cy="20" r="12" fill="none" stroke="#C9A227" strokeWidth="2" opacity="0.9"/>
+                      <circle cx="20" cy="20" r="6" fill="#C9A227" opacity="0.7"/>
+                      <path d="M20 8 L20 14 M20 26 L20 32 M8 20 L14 20 M26 20 L32 20" stroke="#C9A227" strokeWidth="1.5" opacity="0.8"/>
+                    </svg>
+                  </div>
+                  <div className="absolute -top-1 -right-1 w-8 h-8 md:w-10 md:h-10">
+                    <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40">
+                      <circle cx="20" cy="20" r="12" fill="none" stroke="#C9A227" strokeWidth="2" opacity="0.9"/>
+                      <circle cx="20" cy="20" r="6" fill="#C9A227" opacity="0.7"/>
+                      <path d="M20 8 L20 14 M20 26 L20 32 M8 20 L14 20 M26 20 L32 20" stroke="#C9A227" strokeWidth="1.5" opacity="0.8"/>
+                    </svg>
+                  </div>
+                  <div className="absolute -bottom-1 -left-1 w-8 h-8 md:w-10 md:h-10">
+                    <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40">
+                      <circle cx="20" cy="20" r="12" fill="none" stroke="#C9A227" strokeWidth="2" opacity="0.9"/>
+                      <circle cx="20" cy="20" r="6" fill="#C9A227" opacity="0.7"/>
+                      <path d="M20 8 L20 14 M20 26 L20 32 M8 20 L14 20 M26 20 L32 20" stroke="#C9A227" strokeWidth="1.5" opacity="0.8"/>
+                    </svg>
+                  </div>
+                  <div className="absolute -bottom-1 -right-1 w-8 h-8 md:w-10 md:h-10">
+                    <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40">
+                      <circle cx="20" cy="20" r="12" fill="none" stroke="#C9A227" strokeWidth="2" opacity="0.9"/>
+                      <circle cx="20" cy="20" r="6" fill="#C9A227" opacity="0.7"/>
+                      <path d="M20 8 L20 14 M20 26 L20 32 M8 20 L14 20 M26 20 L32 20" stroke="#C9A227" strokeWidth="1.5" opacity="0.8"/>
+                    </svg>
+                  </div>
+                </div>
+                
+                <Link href={`/blog/${blogPosts[0].slug || blogPosts[0].id}`} className="relative z-0 block">
                   <div className="relative h-80 lg:h-96 overflow-hidden">
                     <Image
                       src={blogPosts[0].featured_image || '/slide6.webp'}
@@ -1132,12 +1610,102 @@ export default function HomePage() {
 
               {/* Secondary Blog Posts */}
               <div className="flex flex-col gap-8">
-                {blogPosts.slice(1).map((post) => (
+                {blogPosts.slice(1).map((post, postIndex) => (
                   <Link
                     key={post.id}
                     href={`/blog/${post.slug || post.id}`}
-                    className="blog-card rounded-2xl overflow-hidden bg-white shadow-soft hover:shadow-soft-lg"
+                    className="blog-card rounded-2xl overflow-hidden bg-white shadow-soft hover:shadow-soft-lg relative border-2 border-brass-gold/30"
                   >
+                    {/* Decorative Border Frame */}
+                    <div className="absolute -inset-1 md:-inset-1.5 z-10 pointer-events-none">
+                      {/* Top Border */}
+                      <div className="absolute top-0 left-0 right-0 h-2.5 md:h-3">
+                        <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 12" preserveAspectRatio="none">
+                          <defs>
+                            <pattern id={`blogTop${postIndex}`} x="0" y="0" width="25" height="12" patternUnits="userSpaceOnUse">
+                              <path d="M3 6 L7 3 L11 6 L7 9 Z" fill="#C9A227" opacity="1"/>
+                              <path d="M14 6 L18 3 L22 6 L18 9 Z" fill="#C9A227" opacity="1"/>
+                              <circle cx="8" cy="6" r="1.5" fill="#C9A227" opacity="0.9"/>
+                              <circle cx="17" cy="6" r="1.5" fill="#C9A227" opacity="0.9"/>
+                            </pattern>
+                          </defs>
+                          <rect width="100%" height="100%" fill={`url(#blogTop${postIndex})`}/>
+                        </svg>
+                      </div>
+                      {/* Right Border */}
+                      <div className="absolute top-0 right-0 bottom-0 w-2.5 md:w-3">
+                        <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 200" preserveAspectRatio="none">
+                          <defs>
+                            <pattern id={`blogRight${postIndex}`} x="0" y="0" width="12" height="25" patternUnits="userSpaceOnUse">
+                              <path d="M6 3 L9 7 L6 11 L3 7 Z" fill="#C9A227" opacity="1"/>
+                              <path d="M6 14 L9 18 L6 22 L3 18 Z" fill="#C9A227" opacity="1"/>
+                              <circle cx="6" cy="8" r="1.5" fill="#C9A227" opacity="0.9"/>
+                              <circle cx="6" cy="17" r="1.5" fill="#C9A227" opacity="0.9"/>
+                            </pattern>
+                          </defs>
+                          <rect width="100%" height="100%" fill={`url(#blogRight${postIndex})`}/>
+                        </svg>
+                      </div>
+                      {/* Bottom Border */}
+                      <div className="absolute bottom-0 left-0 right-0 h-2.5 md:h-3">
+                        <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 12" preserveAspectRatio="none">
+                          <defs>
+                            <pattern id={`blogBottom${postIndex}`} x="0" y="0" width="25" height="12" patternUnits="userSpaceOnUse">
+                              <path d="M3 6 L7 9 L11 6 L7 3 Z" fill="#C9A227" opacity="1"/>
+                              <path d="M14 6 L18 9 L22 6 L18 3 Z" fill="#C9A227" opacity="1"/>
+                              <circle cx="8" cy="6" r="1.5" fill="#C9A227" opacity="0.9"/>
+                              <circle cx="17" cy="6" r="1.5" fill="#C9A227" opacity="0.9"/>
+                            </pattern>
+                          </defs>
+                          <rect width="100%" height="100%" fill={`url(#blogBottom${postIndex})`}/>
+                        </svg>
+                      </div>
+                      {/* Left Border */}
+                      <div className="absolute top-0 left-0 bottom-0 w-2.5 md:w-3">
+                        <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 200" preserveAspectRatio="none">
+                          <defs>
+                            <pattern id={`blogLeft${postIndex}`} x="0" y="0" width="12" height="25" patternUnits="userSpaceOnUse">
+                              <path d="M6 3 L9 7 L6 11 L3 7 Z" fill="#C9A227" opacity="1"/>
+                              <path d="M6 14 L9 18 L6 22 L3 18 Z" fill="#C9A227" opacity="1"/>
+                              <circle cx="6" cy="8" r="1.5" fill="#C9A227" opacity="0.9"/>
+                              <circle cx="6" cy="17" r="1.5" fill="#C9A227" opacity="0.9"/>
+                            </pattern>
+                          </defs>
+                          <rect width="100%" height="100%" fill={`url(#blogLeft${postIndex})`}/>
+                        </svg>
+                      </div>
+                      {/* Corner Decorations */}
+                      <div className="absolute -top-1 -left-1 w-8 h-8 md:w-10 md:h-10">
+                        <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40">
+                          <circle cx="20" cy="20" r="12" fill="none" stroke="#C9A227" strokeWidth="2" opacity="0.9"/>
+                          <circle cx="20" cy="20" r="6" fill="#C9A227" opacity="0.7"/>
+                          <path d="M20 8 L20 14 M20 26 L20 32 M8 20 L14 20 M26 20 L32 20" stroke="#C9A227" strokeWidth="1.5" opacity="0.8"/>
+                        </svg>
+                      </div>
+                      <div className="absolute -top-1 -right-1 w-8 h-8 md:w-10 md:h-10">
+                        <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40">
+                          <circle cx="20" cy="20" r="12" fill="none" stroke="#C9A227" strokeWidth="2" opacity="0.9"/>
+                          <circle cx="20" cy="20" r="6" fill="#C9A227" opacity="0.7"/>
+                          <path d="M20 8 L20 14 M20 26 L20 32 M8 20 L14 20 M26 20 L32 20" stroke="#C9A227" strokeWidth="1.5" opacity="0.8"/>
+                        </svg>
+                      </div>
+                      <div className="absolute -bottom-1 -left-1 w-8 h-8 md:w-10 md:h-10">
+                        <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40">
+                          <circle cx="20" cy="20" r="12" fill="none" stroke="#C9A227" strokeWidth="2" opacity="0.9"/>
+                          <circle cx="20" cy="20" r="6" fill="#C9A227" opacity="0.7"/>
+                          <path d="M20 8 L20 14 M20 26 L20 32 M8 20 L14 20 M26 20 L32 20" stroke="#C9A227" strokeWidth="1.5" opacity="0.8"/>
+                        </svg>
+                      </div>
+                      <div className="absolute -bottom-1 -right-1 w-8 h-8 md:w-10 md:h-10">
+                        <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40">
+                          <circle cx="20" cy="20" r="12" fill="none" stroke="#C9A227" strokeWidth="2" opacity="0.9"/>
+                          <circle cx="20" cy="20" r="6" fill="#C9A227" opacity="0.7"/>
+                          <path d="M20 8 L20 14 M20 26 L20 32 M8 20 L14 20 M26 20 L32 20" stroke="#C9A227" strokeWidth="1.5" opacity="0.8"/>
+                        </svg>
+                      </div>
+                    </div>
+                    
+                    <div className="relative z-0">
                     <div className="relative h-48 overflow-hidden">
                       <Image
                         src={post.featured_image || '/slide7.webp'}
@@ -1164,6 +1732,7 @@ export default function HomePage() {
                         {post.title}
                       </h3>
                     </div>
+                    </div>
                   </Link>
                 ))}
               </div>
@@ -1188,9 +1757,9 @@ export default function HomePage() {
 
       {/* Newsletter Section */}
       <section className="py-20 bg-charcoal text-white relative overflow-hidden">
-        {/* Animated White Tribal Pattern - Rotating Mandala Effect */}
-        <div className="absolute inset-0 pointer-events-none">
-          <div className="tribal-pattern-rotate absolute inset-0 opacity-[0.04]">
+        {/* Animated White Tribal Pattern - Rotating Mandala Effect - Seamless */}
+        <div className="absolute inset-0 pointer-events-none overflow-hidden">
+          <div className="tribal-pattern-rotate absolute opacity-[0.04]">
             <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" preserveAspectRatio="xMidYMid slice">
               <defs>
                 <pattern id="whiteTribalPattern" x="0" y="0" width="180" height="180" patternUnits="userSpaceOnUse">
@@ -1294,11 +1863,11 @@ export default function HomePage() {
         
         <div className="container-elegant relative z-10">
           <div className="max-w-3xl mx-auto text-center">
-            <p className="text-brass-gold font-medium tracking-widest uppercase mb-3">Stay Connected</p>
-            <h2 className="text-4xl md:text-5xl font-serif font-bold mb-4">
+            <p className="text-brass-gold font-semibold tracking-widest uppercase mb-3 text-lg">Stay Connected</p>
+            <h2 className="text-4xl md:text-5xl font-serif font-bold text-white mb-4">
               Join Our Community
             </h2>
-            <p className="text-xl text-cream-300 mb-10">
+            <p className="text-xl text-cream-200 font-medium mb-10">
               Get exclusive offers, artisan stories, and updates on new collections delivered to your inbox.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 max-w-lg mx-auto">

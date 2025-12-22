@@ -330,24 +330,59 @@ a, button {
   display: flex;
   transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
   will-change: transform;
+  gap: 0.75rem;
 }
 
 .product-slide {
   flex: 0 0 33.333%;
   min-width: 0;
-  padding: 0 0.75rem;
   box-sizing: border-box;
 }
 
 @media (max-width: 1024px) {
+  .product-slider {
+    gap: 0.625rem;
+  }
   .product-slide {
     flex: 0 0 50%;
   }
 }
 
 @media (max-width: 640px) {
+  .product-slider {
+    gap: 0.5rem;
+  }
   .product-slide {
-    flex: 0 0 100%;
+    flex: 0 0 45.45%; /* 2.2 items per view (100/2.2 = 45.45%) */
+  }
+  
+  /* Reduce product card size on mobile */
+  .product-slide .bg-white {
+    transform: scale(0.95);
+    transform-origin: center;
+  }
+  
+  .product-slide .p-5 {
+    padding: 0.875rem;
+  }
+  
+  .product-slide .text-lg {
+    font-size: 0.95rem;
+  }
+  
+  .product-slide .aspect-square {
+    aspect-ratio: 1 / 1;
+  }
+  
+  /* Smaller button on mobile */
+  .product-slide .btn-gold {
+    padding: 0.625rem 0.875rem;
+    font-size: 0.875rem;
+  }
+  
+  .product-slide .btn-gold svg {
+    width: 1rem;
+    height: 1rem;
   }
 }
 
@@ -947,21 +982,44 @@ a, button {
   }
 }
 
-/* Pattern 5: Slow rotation effect (Newsletter) */
+/* Pattern 5: Slow rotation effect (Newsletter) - Seamless rotation */
 .tribal-pattern-rotate {
   animation: tribalRotate 120s linear infinite;
   transform-origin: center center;
+  width: 200%;
+  height: 200%;
+  left: -50%;
+  top: -50%;
 }
 
 @keyframes tribalRotate {
   0% {
-    transform: rotate(0deg) scale(1.1);
-  }
-  50% {
-    transform: rotate(180deg) scale(1.15);
+    transform: rotate(0deg);
   }
   100% {
-    transform: rotate(360deg) scale(1.1);
+    transform: rotate(360deg);
+  }
+}
+
+/* Golden brass shine effect for titles */
+.golden-brass-title {
+  font-family: var(--font-sanskrit), var(--font-cormorant), serif;
+  background: linear-gradient(135deg, #C9A227 0%, #E3C654 25%, #F5D76E 50%, #E3C654 75%, #C9A227 100%);
+  background-size: 200% 200%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: goldenShine 3s ease-in-out infinite;
+  text-shadow: 0 0 30px rgba(201, 162, 39, 0.5);
+  filter: drop-shadow(0 2px 4px rgba(201, 162, 39, 0.3));
+}
+
+@keyframes goldenShine {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
   }
 }
 

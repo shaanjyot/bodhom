@@ -165,7 +165,7 @@ export default function Header() {
         }`}>
           <nav className={`py-4 border-t ${
             isScrolled 
-              ? 'border-cream-200 bg-white/95 backdrop-blur-md' 
+              ? 'border-cream-200 bg-cream-100/95 backdrop-blur-md' 
               : 'border-white/20 bg-charcoal/95 backdrop-blur-md'
           }`}>
             <div className="flex flex-col space-y-1">

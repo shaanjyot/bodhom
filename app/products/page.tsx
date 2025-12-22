@@ -2,90 +2,78 @@
 
 import ProductCard from '@/components/ProductCard'
 import { Filter, Grid, List } from 'lucide-react'
+import { useState, useEffect } from 'react'
 
-// Mock products - in a real app, this would come from a database
-const allProducts = [
-  {
-    id: '1',
-    name: 'Traditional Brass Diya Set',
-    price: 1299,
-    originalPrice: 1999,
-    image: '/slide0.webp',
-    rating: 4.5,
-    reviews: 128,
-    badge: 'Best Seller',
-  },
-  {
-    id: '2',
-    name: 'Copper Water Pot (Tamra Lota)',
-    price: 2499,
-    originalPrice: 3499,
-    image: '/slide1.webp',
-    rating: 4.8,
-    reviews: 89,
-    badge: 'New',
-  },
-  {
-    id: '3',
-    name: 'Brass Pooja Thali Set',
-    price: 1899,
-    originalPrice: 2599,
-    image: '/slide2.webp',
-    rating: 4.6,
-    reviews: 156,
-    badge: 'Popular',
-  },
-  {
-    id: '4',
-    name: 'Handcrafted Brass Urli',
-    price: 3499,
-    originalPrice: 4999,
-    image: '/slide3.webp',
-    rating: 4.7,
-    reviews: 203,
-    badge: 'Featured',
-  },
-  {
-    id: '5',
-    name: 'Copper Kalash with Stand',
-    price: 4299,
-    originalPrice: 5999,
-    image: '/slide4.webp',
-    rating: 4.9,
-    reviews: 67,
-    badge: 'Premium',
-  },
-  {
-    id: '6',
-    name: 'Brass Ganesha Idol',
-    price: 1599,
-    originalPrice: 2299,
-    image: '/slide5.webp',
-    rating: 4.5,
-    reviews: 312,
-    badge: 'Best Seller',
-  },
-  {
-    id: '7',
-    name: 'Copper Panchapatra Set',
-    price: 2199,
-    originalPrice: 2999,
-    image: '/slide6.webp',
-    rating: 4.4,
-    reviews: 98,
-  },
-  {
-    id: '8',
-    name: 'Brass Oil Lamp (Deepam)',
-    price: 899,
-    originalPrice: 1299,
-    image: '/slide7.webp',
-    rating: 4.6,
-    reviews: 145,
-  },
-]
+interface BackendProduct {
+  id: string
+  name: string
+  price: number
+  original_price?: number
+  thumbnail?: string
+  images?: string[]
+  rating?: number
+  reviews_count?: number
+  badge?: string
+}
+
+interface ProductCardProduct {
+  id: string
+  name: string
+  price: number
+  originalPrice?: number
+  image: string
+  rating: number
+  reviews: number
+  badge?: string
+}
 
 export default function ProductsPage() {
+  const [products, setProducts] = useState<ProductCardProduct[]>([])
+  const [loading, setLoading] = useState(true)
+  const [total, setTotal] = useState(0)
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await fetch('/api/products?active=true')
+        const data = await response.json()
+        
+        if (data.products && Array.isArray(data.products)) {
+          // Map backend products to ProductCard format
+          const mappedProducts: ProductCardProduct[] = data.products.map((product: BackendProduct) => {
+            // Get image: use thumbnail if available, otherwise first image from images array, fallback to placeholder
+            let imageUrl = '/slide0.webp' // fallback
+            if (product.thumbnail && product.thumbnail.trim()) {
+              imageUrl = product.thumbnail.trim()
+            } else if (product.images && product.images.length > 0 && product.images[0]?.trim()) {
+              imageUrl = product.images[0].trim()
+            }
+
+            return {
+              id: product.id,
+              name: product.name,
+              price: Number(product.price),
+              originalPrice: product.original_price ? Number(product.original_price) : undefined,
+              image: imageUrl,
+              rating: product.rating ? Number(product.rating) : 0,
+              reviews: product.reviews_count || 0,
+              badge: product.badge,
+            }
+          })
+          
+          setProducts(mappedProducts)
+          setTotal(data.total || mappedProducts.length)
+        }
+      } catch (error) {
+        console.error('Error fetching products:', error)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchProducts()
+  }, [])
+
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
@@ -116,7 +104,7 @@ export default function ProductsPage() {
                 <span className="text-sm font-medium text-charcoal">Filters</span>
               </button>
               <span className="text-sm text-charcoal-400">
-                Showing {allProducts.length} products
+                Showing {products.length} {total > products.length ? `of ${total} ` : ''}products
               </span>
             </div>
             <div className="flex items-center gap-2">
@@ -130,11 +118,30 @@ export default function ProductsPage() {
           </div>
 
           {/* Products Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {allProducts.map((product) => (
-              <ProductCard key={product.id} product={product} />
-            ))}
-          </div>
+          {loading ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              {[...Array(8)].map((_, i) => (
+                <div key={i} className="bg-white rounded-2xl shadow-soft animate-pulse">
+                  <div className="aspect-square bg-cream-200"></div>
+                  <div className="p-5">
+                    <div className="h-4 bg-cream-200 rounded mb-2"></div>
+                    <div className="h-4 bg-cream-200 rounded w-3/4 mb-4"></div>
+                    <div className="h-6 bg-cream-200 rounded w-1/2"></div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : products.length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              {products.map((product) => (
+                <ProductCard key={product.id} product={product} />
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-12">
+              <p className="text-charcoal-400">No products found.</p>
+            </div>
+          )}
 
           {/* Load More */}
           <div className="text-center mt-12">
