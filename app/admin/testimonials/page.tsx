@@ -99,18 +99,18 @@ export default function TestimonialsPage() {
 
     setUploading(true)
     try {
-      const formData = new FormData()
-      formData.append('file', file)
-      formData.append('bucket', 'testimonials')
+      const uploadFormData = new FormData()
+      uploadFormData.append('file', file)
+      uploadFormData.append('bucket', 'testimonials')
 
       const res = await fetch('/api/upload', {
         method: 'POST',
-        body: formData,
+        body: uploadFormData,
       })
 
       if (res.ok) {
         const data = await res.json()
-        setFormData({ ...formData, avatar: data.url })
+        setFormData((prev) => ({ ...prev, avatar: data.url }))
       } else {
         const error = await res.json()
         alert(error.error || 'Failed to upload image')
