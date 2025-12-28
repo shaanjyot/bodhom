@@ -48,9 +48,9 @@ export default function ProductCard({ product }: ProductCardProps) {
 
   return (
     <Link href={`/products/${product.id}`} className="group">
-      <div className="bg-white rounded-2xl shadow-soft hover:shadow-soft-lg transition-all duration-500 overflow-hidden card-glow">
+      <div className="bg-white rounded-2xl shadow-soft hover:shadow-soft-lg transition-all duration-500 overflow-hidden card-glow w-full h-full flex flex-col">
         {/* Image Container */}
-        <div className="relative aspect-square overflow-hidden bg-cream-100">
+        <div className="relative aspect-square overflow-hidden bg-cream-100 min-h-[200px] sm:min-h-[250px] md:min-h-[280px]">
           {product.badge && (
             <span className="absolute top-4 left-4 bg-brass-gold text-white px-3 py-1 rounded-full text-xs font-semibold z-10">
               {product.badge}
@@ -86,18 +86,18 @@ export default function ProductCard({ product }: ProductCardProps) {
         </div>
 
         {/* Product Info */}
-        <div className="p-5">
-          <h3 className="font-serif text-lg font-semibold text-charcoal mb-2 group-hover:text-brass-gold transition-colors line-clamp-2">
+        <div className="p-5 sm:p-6 md:p-6 lg:p-6 flex-1 flex flex-col">
+          <h3 className="font-serif text-base sm:text-lg md:text-xl font-semibold text-charcoal mb-2 sm:mb-3 group-hover:text-brass-gold transition-colors line-clamp-2">
             {product.name}
           </h3>
 
           {/* Rating */}
-          <div className="flex items-center gap-2 mb-3">
+          <div className="flex items-center gap-2 mb-3 sm:mb-4">
             <div className="flex items-center">
               {[...Array(5)].map((_, i) => (
                 <Star
                   key={i}
-                  className={`w-4 h-4 ${
+                  className={`w-3.5 h-3.5 sm:w-4 sm:h-4 md:w-4 md:h-4 ${
                     i < Math.floor(product.rating)
                       ? 'fill-brass-gold text-brass-gold'
                       : 'text-cream-400'
@@ -105,18 +105,18 @@ export default function ProductCard({ product }: ProductCardProps) {
                 />
               ))}
             </div>
-            <span className="text-sm text-charcoal-400">
+            <span className="text-xs sm:text-sm md:text-sm text-charcoal-400">
               {product.rating} ({product.reviews})
             </span>
           </div>
 
           {/* Price */}
-          <div className="flex items-baseline gap-2 mb-4">
-            <span className="text-2xl font-bold text-charcoal">
+          <div className="flex items-baseline gap-2 mb-4 sm:mb-5">
+            <span className="text-xl sm:text-2xl md:text-2xl font-bold text-charcoal">
               ₹{product.price.toLocaleString()}
             </span>
             {product.originalPrice && (
-              <span className="text-sm text-charcoal-400 line-through">
+              <span className="text-xs sm:text-sm md:text-sm text-charcoal-400 line-through">
                 ₹{product.originalPrice.toLocaleString()}
               </span>
             )}
@@ -125,9 +125,9 @@ export default function ProductCard({ product }: ProductCardProps) {
           {/* Add to Cart Button */}
           <button
             onClick={handleAddToCart}
-            className="w-full btn-gold text-white py-3 px-4 rounded-xl font-semibold flex items-center justify-center gap-2"
+            className="w-full btn-gold text-white py-2.5 sm:py-3 md:py-3 px-4 rounded-xl text-sm sm:text-base md:text-base font-semibold flex items-center justify-center gap-2 mt-auto"
           >
-            <ShoppingCart className="w-5 h-5" />
+            <ShoppingCart className="w-4 h-4 sm:w-5 sm:h-5 md:w-5 md:h-5" />
             Add to Cart
           </button>
         </div>

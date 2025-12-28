@@ -11,6 +11,7 @@ interface Testimonial {
   rating: number
   text: string
   product: string
+  avatar?: string
   is_active: boolean
   sort_order: number
 }
@@ -29,9 +30,11 @@ export default function TestimonialsPage() {
     rating: 5,
     text: '',
     product: '',
+    avatar: '',
     is_active: true,
     sort_order: 0,
   })
+  const [uploading, setUploading] = useState(false)
 
   useEffect(() => {
     fetchTestimonials()
@@ -59,6 +62,7 @@ export default function TestimonialsPage() {
         rating: testimonial.rating || 5,
         text: testimonial.text,
         product: testimonial.product || '',
+        avatar: testimonial.avatar || '',
         is_active: testimonial.is_active,
         sort_order: testimonial.sort_order || 0,
       })
@@ -71,6 +75,7 @@ export default function TestimonialsPage() {
         rating: 5,
         text: '',
         product: '',
+        avatar: '',
         is_active: true,
         sort_order: testimonials.length + 1,
       })
@@ -83,8 +88,39 @@ export default function TestimonialsPage() {
     setEditingTestimonial(null)
   }
 
-  const generateInitials = (name: string) => {
+  const generateInitials = (name: string | undefined | null) => {
+    if (!name || typeof name !== 'string') return 'AB'
     return name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2)
+  }
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    setUploading(true)
+    try {
+      const formData = new FormData()
+      formData.append('file', file)
+      formData.append('bucket', 'testimonials')
+
+      const res = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData,
+      })
+
+      if (res.ok) {
+        const data = await res.json()
+        setFormData({ ...formData, avatar: data.url })
+      } else {
+        const error = await res.json()
+        alert(error.error || 'Failed to upload image')
+      }
+    } catch (error) {
+      console.error('Error uploading image:', error)
+      alert('Failed to upload image')
+    } finally {
+      setUploading(false)
+    }
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -94,7 +130,7 @@ export default function TestimonialsPage() {
     try {
       const payload = {
         ...formData,
-        initials: formData.initials || generateInitials(formData.name),
+        initials: formData.initials || generateInitials(formData.name || ''),
       }
 
       const url = editingTestimonial ? `/api/testimonials/${editingTestimonial.id}` : '/api/testimonials'
@@ -185,10 +221,16 @@ export default function TestimonialsPage() {
           {testimonials.map((testimonial) => (
             <div key={testimonial.id} className="bg-white rounded-xl shadow-soft p-6">
               <div className="flex items-start justify-between mb-4">
-                <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-brass-gold to-primary-dark flex items-center justify-center text-white font-semibold">
-                    {testimonial.initials}
-                  </div>
+                  <div className="flex items-center gap-3">
+                  {testimonial.avatar ? (
+                    <div className="w-12 h-12 rounded-full overflow-hidden">
+                      <img src={testimonial.avatar} alt={testimonial.name} className="w-full h-full object-cover" />
+                    </div>
+                  ) : (
+                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-brass-gold to-primary-dark flex items-center justify-center text-white font-semibold">
+                      {testimonial.initials}
+                    </div>
+                  )}
                   <div>
                     <h3 className="font-semibold text-charcoal">{testimonial.name}</h3>
                     {testimonial.location && (
@@ -331,6 +373,36 @@ export default function TestimonialsPage() {
                   placeholder="Brass Diya Set"
                   className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brass-gold"
                 />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-charcoal mb-2">Avatar Image</label>
+                <div className="flex items-center gap-4">
+                  {formData.avatar && (
+                    <div className="w-20 h-20 rounded-full overflow-hidden border-2 border-brass-gold">
+                      <img src={formData.avatar} alt="Avatar" className="w-full h-full object-cover" />
+                    </div>
+                  )}
+                  <div className="flex-1">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageUpload}
+                      disabled={uploading}
+                      className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brass-gold disabled:opacity-50"
+                    />
+                    {uploading && <p className="text-xs text-charcoal-400 mt-1">Uploading...</p>}
+                    {formData.avatar && (
+                      <button
+                        type="button"
+                        onClick={() => setFormData({ ...formData, avatar: '' })}
+                        className="text-xs text-red-500 mt-1 hover:underline"
+                      >
+                        Remove image
+                      </button>
+                    )}
+                  </div>
+                </div>
               </div>
 
               <label className="flex items-center gap-2 cursor-pointer">

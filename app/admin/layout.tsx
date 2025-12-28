@@ -18,7 +18,8 @@ import {
   Store,
   ChevronLeft,
   ChevronRight,
-  ChevronDown
+  ChevronDown,
+  Video
 } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import { useAdminAuth } from '@/hooks/useAdminAuth'
@@ -29,6 +30,7 @@ const navItems = [
   { href: '/admin/orders', label: 'Orders', icon: ShoppingCart },
   { href: '/admin/categories', label: 'Categories', icon: FolderTree },
   { href: '/admin/slides', label: 'Hero Slides', icon: Image },
+  { href: '/admin/reels', label: 'Reels & Shorts', icon: Video },
   { href: '/admin/blog', label: 'Blog Posts', icon: FileText },
   { href: '/admin/pages', label: 'Pages', icon: FileText },
   { href: '/admin/menu', label: 'Menu Items', icon: Menu },

@@ -1,53 +1,51 @@
+'use client'
+
 import Link from 'next/link'
 import Image from 'next/image'
 import { ArrowRight } from 'lucide-react'
+import { useState, useEffect } from 'react'
 
-const collections = [
-  {
-    name: 'Brass Utensils',
-    description: 'Traditional brass cookware and utensils for everyday use',
-    image: '/slide0.webp',
-    count: 45,
-    slug: 'brass-utensils',
-  },
-  {
-    name: 'Copper Cookware',
-    description: 'Pure copper vessels for healthy cooking',
-    image: '/slide1.webp',
-    count: 32,
-    slug: 'copper-cookware',
-  },
-  {
-    name: 'Pooja Items',
-    description: 'Essential items for your daily prayers and rituals',
-    image: '/slide2.webp',
-    count: 67,
-    slug: 'pooja-items',
-  },
-  {
-    name: 'Home Decor',
-    description: 'Beautiful decorative pieces to enhance your living space',
-    image: '/slide3.webp',
-    count: 28,
-    slug: 'home-decor',
-  },
-  {
-    name: 'Idols & Statues',
-    description: 'Handcrafted idols and statues for worship',
-    image: '/slide4.webp',
-    count: 52,
-    slug: 'idols-statues',
-  },
-  {
-    name: 'Gift Sets',
-    description: 'Curated gift sets for special occasions',
-    image: '/slide5.webp',
-    count: 18,
-    slug: 'gift-sets',
-  },
-]
+interface Category {
+  id: string
+  name: string
+  slug: string
+  description?: string
+  image?: string
+}
 
 export default function CollectionsPage() {
+  const [collections, setCollections] = useState<Category[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    fetchCollections()
+  }, [])
+
+  const fetchCollections = async () => {
+    try {
+      const res = await fetch('/api/categories?active=true')
+      const data = await res.json()
+      if (data.categories && Array.isArray(data.categories)) {
+        setCollections(data.categories)
+      }
+    } catch (error) {
+      console.error('Error fetching collections:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  if (loading) {
+    return (
+      <div className="min-h-screen">
+        <section className="relative bg-charcoal text-white pt-32 pb-16 overflow-hidden">
+          <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <p className="text-brass-gold font-medium tracking-widest uppercase mb-4">Loading...</p>
+          </div>
+        </section>
+      </div>
+    )
+  }
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
@@ -80,7 +78,7 @@ export default function CollectionsPage() {
               >
                 <div className="aspect-video relative overflow-hidden">
                   <Image
-                    src={collection.image}
+                    src={collection.image || `/slide${(index % 9)}.webp`}
                     alt={collection.name}
                     fill
                     className="object-cover transition-transform duration-700 group-hover:scale-110"
@@ -97,12 +95,11 @@ export default function CollectionsPage() {
                   <h3 className="text-xl font-serif font-semibold text-charcoal mb-2 group-hover:text-brass-gold transition-colors">
                     {collection.name}
                   </h3>
-                  <p className="text-charcoal-400 mb-4">
-                    {collection.description}
-                  </p>
-                  <p className="text-sm text-brass-gold font-medium">
-                    {collection.count} items
-                  </p>
+                  {collection.description && (
+                    <p className="text-charcoal-400 mb-4">
+                      {collection.description}
+                    </p>
+                  )}
                 </div>
               </Link>
             ))}

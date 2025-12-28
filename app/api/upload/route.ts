@@ -4,9 +4,9 @@ import { createAdminClient } from '@/lib/supabase/server'
 // Using single "bodhom" bucket with folder structure
 const STORAGE_BUCKET = 'bodhom'
 
-type StorageFolder = 'products' | 'slides' | 'blogs' | 'assets' | 'pages' | 'categories'
+type StorageFolder = 'products' | 'slides' | 'blogs' | 'assets' | 'pages' | 'categories' | 'testimonials'
 
-const ALLOWED_FOLDERS: StorageFolder[] = ['products', 'slides', 'blogs', 'assets', 'pages', 'categories']
+const ALLOWED_FOLDERS: StorageFolder[] = ['products', 'slides', 'blogs', 'assets', 'pages', 'categories', 'testimonials']
 const MAX_FILE_SIZE = 10 * 1024 * 1024 // 10MB
 const ALLOWED_MIME_TYPES = [
   'image/jpeg',
@@ -31,7 +31,7 @@ export async function POST(request: NextRequest) {
     // Validate folder (backwards compatible - accepts 'bucket' param)
     if (!folder || !ALLOWED_FOLDERS.includes(folder)) {
       return NextResponse.json(
-        { error: 'Invalid folder. Allowed: products, slides, blogs, assets, pages, categories' },
+        { error: 'Invalid folder. Allowed: products, slides, blogs, assets, pages, categories, testimonials' },
         { status: 400 }
       )
     }

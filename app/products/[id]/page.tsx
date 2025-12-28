@@ -152,15 +152,15 @@ export default function ProductDetailPage() {
               />
             </div>
             {productImages.length > 1 && (
-              <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-3 gap-4">
                 {productImages.map((image, index) => (
-                  <button
-                    key={index}
-                    onClick={() => setSelectedImage(index)}
+                <button
+                  key={index}
+                  onClick={() => setSelectedImage(index)}
                     className={`aspect-square rounded-xl overflow-hidden border-2 transition-colors relative ${
-                      selectedImage === index ? 'border-brass-gold' : 'border-cream-300'
-                    }`}
-                  >
+                    selectedImage === index ? 'border-brass-gold' : 'border-cream-300'
+                  }`}
+                >
                     <Image
                       src={image}
                       alt={`${product.name} - Image ${index + 1}`}
@@ -170,9 +170,9 @@ export default function ProductDetailPage() {
                         e.currentTarget.src = '/slide0.webp'
                       }}
                     />
-                  </button>
-                ))}
-              </div>
+                </button>
+              ))}
+            </div>
             )}
           </div>
 
@@ -240,17 +240,17 @@ export default function ProductDetailPage() {
 
             {/* Features */}
             {product.features && product.features.length > 0 && (
-              <div className="mb-6">
-                <h3 className="font-semibold text-charcoal mb-3">Key Features:</h3>
-                <ul className="space-y-2">
-                  {product.features.map((feature, index) => (
-                    <li key={index} className="flex items-start">
-                      <span className="text-brass-gold mr-2">✓</span>
-                      <span className="text-charcoal-500">{feature}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
+            <div className="mb-6">
+              <h3 className="font-semibold text-charcoal mb-3">Key Features:</h3>
+              <ul className="space-y-2">
+                {product.features.map((feature, index) => (
+                  <li key={index} className="flex items-start">
+                    <span className="text-brass-gold mr-2">✓</span>
+                    <span className="text-charcoal-500">{feature}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
             )}
 
             {/* Quantity Selector */}
@@ -323,19 +323,19 @@ export default function ProductDetailPage() {
 
         {/* Specifications */}
         {product.specifications && Object.keys(product.specifications).length > 0 && (
-          <div className="mt-16 bg-white rounded-2xl shadow-soft p-8">
-            <h2 className="text-2xl font-serif font-bold text-charcoal mb-6">
-              Specifications
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {Object.entries(product.specifications).map(([key, value]) => (
-                <div key={key} className="flex">
-                  <span className="font-semibold text-charcoal w-40">{key}:</span>
+        <div className="mt-16 bg-white rounded-2xl shadow-soft p-8">
+          <h2 className="text-2xl font-serif font-bold text-charcoal mb-6">
+            Specifications
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {Object.entries(product.specifications).map(([key, value]) => (
+              <div key={key} className="flex">
+                <span className="font-semibold text-charcoal w-40">{key}:</span>
                   <span className="text-charcoal-400">{String(value)}</span>
-                </div>
-              ))}
-            </div>
+              </div>
+            ))}
           </div>
+        </div>
         )}
       </div>
     </div>
